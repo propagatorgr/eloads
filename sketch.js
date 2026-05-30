@@ -95,11 +95,11 @@ function drawForces() {
   let Fc = k * Q * q / (r * r);
   let Fg = m * g;
 
-  let scaleF = 0.05; // ✅ ΜΕΓΑΛΑ ΒΕΛΗ ΤΩΡΑ
+  let scaleF = 25; // ✅ ΜΕΓΑΛΗ ΜΕΓΕΘΥΝΣΗ
 
   // Coulomb (πάνω)
   stroke('green');
-  strokeWeight(3);
+  strokeWeight(4);
   line(width / 2, y,
        width / 2,
        y - Fc * scaleF);
@@ -117,10 +117,10 @@ function drawForces() {
   // labels
   noStroke();
   fill('green');
-  text("Fc", width / 2 + 8, y - Fc * scaleF);
+  text("Fc", width / 2 + 10, y - Fc * scaleF);
 
   fill('orange');
-  text("w", width / 2 + 8, y + Fg * scaleF);
+  text("w", width / 2 + 10, y + Fg * scaleF);
 }
 
 
