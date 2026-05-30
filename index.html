@@ -12,7 +12,18 @@ body {
   background: #ddd;
   font-family: Arial;
 }
+#sliders {
+  display: flex;
+  gap: 40px;        /* απόσταση μεταξύ sliders ✅ */
+  align-items: center;
+  flex-wrap: wrap;  /* αν μικρύνει η οθόνη ✅ */
+}
 
+.sliderBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;        /* απόσταση label–slider–value ✅ */
+}
 #controls {
   padding: 10px;
   background: #ccc;
