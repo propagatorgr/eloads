@@ -13,7 +13,7 @@ let scale = 250;
 let yEq;
 let vMaxTheory;
 
-let KE = 0, PE = 0, Etotal = 0;
+
 
 // ===== SETUP =====
 function setup() {
@@ -84,14 +84,7 @@ function updatePhysics() {
   y = constrain(y, 50, height - 20);
 }
 
-// ===== ENERGY =====
-function computeEnergy() {
-  let r = (yQ - y) / scale;
 
-  KE = 0.5 * m * v * v;
-  PE = m * g * r + k * Q * q / r;
-  Etotal = KE + PE;
-}
 
 // ===== DRAW OBJECTS =====
 function drawCharges() {
@@ -138,28 +131,7 @@ function arrow(x, y, dir, col) {
 }
 
 // ===== ENERGY DIAGRAM =====
-function drawEnergyDiagram() {
-  let x0 = 40;
-  let y0 = 80;
-  let scaleE = 40;
 
-  strokeWeight(6);
-
-  stroke('blue');
-  line(x0, y0, x0, y0 + KE * scaleE);
-
-  stroke('red');
-  line(x0 + 40, y0, x0 + 40, y0 + PE * scaleE);
-
-  stroke('black');
-  line(x0 + 80, y0, x0 + 80, y0 + Etotal * scaleE);
-
-  noStroke();
-  fill(0);
-  text("K", x0 - 5, y0 + KE * scaleE + 15);
-  text("U", x0 + 35, y0 + PE * scaleE + 15);
-  text("E", x0 + 75, y0 + Etotal * scaleE + 15);
-}
 
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
