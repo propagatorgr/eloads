@@ -14,9 +14,12 @@ body {
 }
 #sliders {
   display: flex;
-  gap: 40px;        /* απόσταση μεταξύ sliders ✅ */
+  justify-content: center;   /* ✅ το κεντράρει */
+  gap: 40px;
   align-items: center;
-  flex-wrap: wrap;  /* αν μικρύνει η οθόνη ✅ */
+  flex-wrap: wrap;
+
+  padding: 0 30px;           /* ✅ “αέρας” δεξιά‑αριστερά */
 }
 
 .sliderBlock {
