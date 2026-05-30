@@ -4,139 +4,164 @@ let m = 0.1;
 let g = 10;
 let k = 9e9;
 
-let yQ;
-let y;
-let v = 0;
-let a = 0;
-
+let yQ, y, v = 0, a = 0;
 let prevV = 0;
 let running = false;
 
-let scale = 300;
+let scale = 250;
 
 let yEq;
+let vMaxTheory;
 
-// =====================
-// p5 SETUP
-// =====================
+let KE = 0, PE = 0, Etotal = 0;
+
+// ===== SETUP =====
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight - 70);
+  let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
+  initSystem();
+}
+
+// ===== INIT =====
+function initSystem() {
   yQ = height - 120;
 
-  resetSimulation();
+  let d = 0.3;
+  y = yQ - d * scale;
+
+  v = 0;
+  prevV = 0;
+  running = false;
 
   let rEq = sqrt((k * Q * q) / (m * g));
   yEq = yQ - rEq * scale;
+
+  let r0 = 0.3;
+  let U0 = m * g * r0 + k * Q * q / r0;
+  let Ueq = m * g * rEq + k * Q * q / rEq;
+
+  vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
 }
-// =====================
-// LOOP
-// =====================
+
+// ===== RESIZE =====
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight - 80);
+  initSystem();
+}
+
+// ===== DRAW =====
 function draw() {
-  background(240);
+  background(230);
 
   drawEquilibriumLine();
+
+  if (running) updatePhysics();
+
   drawCharges();
 
-  if (running) {
-    updatePhysics();
-  }
+  computeEnergy();
+  drawEnergyDiagram();
 
   drawInfo();
 }
 
-// =====================
-// PHYSICS
-// =====================
+// ===== PHYSICS =====
 function updatePhysics() {
   let r = (yQ - y) / scale;
 
   let Fc = k * Q * q / (r * r);
   let F = Fc - m * g;
 
-  a = F / m;
-
   let dt = 0.01;
 
   prevV = v;
-  v += a * dt;
+  v += (F / m) * dt;
   y -= v * dt * scale;
 
-  // stop at extrema
-  if (prevV * v < 0) {
-    running = false;
-  }
+  if (prevV * v < 0) running = false;
 
-  // keep in canvas
   y = constrain(y, 50, height - 20);
 }
 
-// =====================
-// DRAWING
-// =====================
+// ===== ENERGY =====
+function computeEnergy() {
+  let r = (yQ - y) / scale;
+
+  KE = 0.5 * m * v * v;
+  PE = m * g * r + k * Q * q / r;
+  Etotal = KE + PE;
+}
+
+// ===== DRAW OBJECTS =====
 function drawCharges() {
-  // Q
   fill('red');
-  ellipse(width / 2, yQ, 20, 20);
+  noStroke();
+  ellipse(width / 2, yQ, 20);
 
-  // q
   fill('blue');
-  ellipse(width / 2, y, 20, 20);
+  ellipse(width / 2, y, 20);
 
-  // Forces ✅
   if (document.getElementById("forcesCheckbox").checked) {
     drawForces();
   }
 }
 
+// ===== FORCES =====
 function drawForces() {
   let r = (yQ - y) / scale;
+
   let Fc = k * Q * q / (r * r);
   let Fg = m * g;
 
-  let scaleF = 25; // ✅ ΜΕΓΑΛΗ ΜΕΓΕΘΥΝΣΗ
+  let scaleF = 25;
 
-  // Coulomb (πάνω)
-  stroke('green');
   strokeWeight(4);
+
+  // Coulomb
+  stroke('green');
   line(width / 2, y,
-       width / 2,
-       y - Fc * scaleF);
+       width / 2, y - Fc * scaleF);
+  arrow(width / 2, y - Fc * scaleF, -1, 'green');
 
-  drawArrowHead(width / 2, y - Fc * scaleF, -1, 'green');
-
-  // Βάρος (κάτω)
+  // Weight
   stroke('orange');
   line(width / 2, y,
-       width / 2,
-       y + Fg * scaleF);
-
-  drawArrowHead(width / 2, y + Fg * scaleF, 1, 'orange');
-
-  // labels
-  noStroke();
-  fill('green');
-  text("Fc", width / 2 + 10, y - Fc * scaleF);
-
-  fill('orange');
-  text("w", width / 2 + 10, y + Fg * scaleF);
+       width / 2, y + Fg * scaleF);
+  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
 }
 
-
-function drawArrowHead(x, y, dir, col) {
+function arrow(x, y, dir, col) {
   fill(col);
   noStroke();
-
-  let size = 6;
-
-  triangle(
-    x - size, y,
-    x + size, y,
-    x, y + dir * size
-  );
+  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
 }
 
+// ===== ENERGY DIAGRAM =====
+function drawEnergyDiagram() {
+  let x0 = 40;
+  let y0 = 80;
+  let scaleE = 40;
+
+  strokeWeight(6);
+
+  stroke('blue');
+  line(x0, y0, x0, y0 + KE * scaleE);
+
+  stroke('red');
+  line(x0 + 40, y0, x0 + 40, y0 + PE * scaleE);
+
+  stroke('black');
+  line(x0 + 80, y0, x0 + 80, y0 + Etotal * scaleE);
+
+  noStroke();
+  fill(0);
+  text("K", x0 - 5, y0 + KE * scaleE + 15);
+  text("U", x0 + 35, y0 + PE * scaleE + 15);
+  text("E", x0 + 75, y0 + Etotal * scaleE + 15);
+}
+
+// ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
   stroke(0);
   drawingContext.setLineDash([6, 6]);
@@ -148,45 +173,15 @@ function drawEquilibriumLine() {
   text("Θέση ισορροπίας", 10, yEq - 5);
 }
 
+// ===== INFO =====
 function drawInfo() {
   fill(0);
   noStroke();
-
-  text("y = " + nf((yQ - y) / scale, 1, 2) + " m", 10, height - 40);
-  text("v = " + nf(v, 1, 2), 10, height - 20);
+  textSize(16);
+  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
 }
 
-// =====================
-// CONTROLS (HTML)
-// =====================
-function startSim() {
-  running = true;
-}
-
-function resumeSim() {
-  running = true;
-}
-
-function resetSim() {
-  resetSimulation();
-}
-
-function resetSimulation() {
-  let d = 0.3;
-
-  y = yQ - d * scale;
-
-  v = 0;
-  a = 0;
-  prevV = 0;
-
-  running = false;
-}
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight - 70);
-
-  yQ = height - 120;
-
-  let rEq = sqrt((k * Q * q) / (m * g));
-  yEq = yQ - rEq * scale;
-}
+// ===== BUTTONS =====
+function startSim() { running = true; }
+function resumeSim() { running = true; }
+function resetSim() { initSystem(); }
