@@ -210,7 +210,27 @@ function resumeSim() {
   continuousMode = false;  // ✅ βήμα-βήμα
   running = true;
 }
-function resetSim() { initSystem(); }
+function resetSim() {
+
+  // αρχικές τιμές
+  document.getElementById("Qslider").value = 2;
+  document.getElementById("qslider").value = 20;
+  document.getElementById("mslider").value = 0.1;
+
+  // ενημέρωση κειμένου
+  document.getElementById("Qval").innerText = 2;
+  document.getElementById("qval").innerText = 20;
+  document.getElementById("mval").innerText = 0.1;
+
+  // ενημέρωση μεταβλητών
+  Q = 2e-6;
+  q = 20e-6;
+  m = 0.1;
+
+  // scale + σύστημα
+  adjustScale();
+  initSystem();
+}
 function updateFromSliders() {
   // τιμές sliders (Q και q σε μC → C)
   Q = document.getElementById("Qslider").value * 1e-6;
