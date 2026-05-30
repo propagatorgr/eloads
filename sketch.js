@@ -49,10 +49,6 @@ rMaxVal = rMax;
 
   vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
  
-
-// r_eq
-let rEq = sqrt((k * Q * q) / (m * g));
-
 // r_max από ενέργεια
 let A = m * g;
 let B = k * Q * q;
