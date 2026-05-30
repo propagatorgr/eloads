@@ -4,7 +4,7 @@ let m = 0.1;
 let g = 10;
 let k = 9e9;
 let rMin, rEqVal, rMaxVal;
-
+let continuousMode = false;
 let yQ, y, v = 0, a = 0;
 let prevV = 0;
 let running = false;
@@ -99,8 +99,9 @@ function updatePhysics() {
   v += (F / m) * dt;
   y -= v * dt * scale;
 
-  if (prevV * v < 0) running = false;
-
+ if (!continuousMode && prevV * v < 0) {
+  running = false;
+}
   y = constrain(y, 50, height - 20);
 }
 
@@ -167,7 +168,10 @@ function drawEquilibriumLine() {
 function drawInfo() {
   fill(0);
   noStroke();
-  textSize(16);
+ textSize(18);
+fill( continuousMode ? 'green' : 'blue' );
+  // mode λειτουργίας ✅
+  text(continuousMode ? "Continuous" : "Step Mode", 20, 30);
 
   text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
   text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
@@ -175,10 +179,16 @@ function drawInfo() {
 
   text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
 }
-
 // ===== BUTTONS =====
-function startSim() { running = true; }
-function resumeSim() { running = true; }
+function startSim() {
+  continuousMode = true;   // ✅ συνεχής λειτουργία
+  running = true;
+}
+
+function resumeSim() {
+  continuousMode = false;  // ✅ βήμα-βήμα
+  running = true;
+}
 function resetSim() { initSystem(); }
 function updateFromSliders() {
   // τιμές sliders (Q και q σε μC → C)
