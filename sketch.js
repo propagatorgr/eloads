@@ -61,9 +61,6 @@ function draw() {
 
   drawCharges();
 
-
-  drawEnergyDiagram();
-
   drawInfo();
 }
 
