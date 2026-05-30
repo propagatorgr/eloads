@@ -185,5 +185,6 @@ function adjustScale() {
  
 let rMax = max(r0, 2.5 * rEq);
   // αφήνουμε περιθώριο (60% canvas)
-  scale = (0.6 * height) / rMax;
+  
+  scale = (0.8 * height) / (1 + rEq);
 }
