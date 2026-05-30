@@ -166,13 +166,34 @@ function drawEquilibriumLine() {
 // ===== INFO =====
 
 function drawInfo() {
-  fill(0);
   noStroke();
- textSize(18);
-fill( continuousMode ? 'green' : 'blue' );
-  // mode λειτουργίας ✅
-  text(continuousMode ? "Continuous" : "Step Mode", 20, 30);
+  textSize(16);
 
+  // Mode
+  fill(continuousMode ? 'green' : 'blue');
+  text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
+
+  // Legend ✅
+  fill(0);
+  text("Forces:", 20, 60);
+
+  fill('green');
+  text("Fc (Coulomb)", 40, 80);
+
+  fill('orange');
+  text("w (Weight)", 40, 100);
+
+  fill(0);
+  text("Charges:", 20, 130);
+
+  fill('red');
+  text("Q (fixed)", 40, 150);
+
+  fill('blue');
+  text("q (moving)", 40, 170);
+
+  // Μετρήσεις κάτω
+  fill(0);
   text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
   text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
   text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
