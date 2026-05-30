@@ -28,44 +28,43 @@ document.getElementById("mslider").oninput = updateFromSliders;
 
 // ===== INIT =====
 function initSystem() {
-  yQ = height - 120;
-  rMin = r0;
-rEqVal = rEq;
-rMaxVal = rMax;
 
-  let d = 0.3;
-  y = yQ - d * scale;
+  yQ = height - 120;
+
+  let r0 = 0.3;   // ✅ ΠΡΩΤΑ
+
+  y = yQ - r0 * scale;
 
   v = 0;
   prevV = 0;
   running = false;
 
+  // r_eq
   let rEq = sqrt((k * Q * q) / (m * g));
   yEq = yQ - rEq * scale;
 
-  let r0 = 0.3;
+  // vmax
   let U0 = m * g * r0 + k * Q * q / r0;
   let Ueq = m * g * rEq + k * Q * q / rEq;
-
   vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
- 
-// r_max από ενέργεια
-let A = m * g;
-let B = k * Q * q;
 
-// λύση εξίσωσης: A r^2 - E r + B = 0
-let E0 = A * r0 + B / r0;
+  // r_max από ενέργεια
+  let A = m * g;
+  let B = k * Q * q;
 
-// διακρίνουσα
-let D = E0 * E0 - 4 * A * B;
+  let E0 = A * r0 + B / r0;
 
-// δύο λύσεις
-let r1 = (E0 + sqrt(D)) / (2 * A);
-let r2 = (E0 - sqrt(D)) / (2 * A);
+  let D = E0 * E0 - 4 * A * B;
 
-// θέλουμε τη μεγαλύτερη
-let rMax = max(r1, r2);
+  let r1 = (E0 + sqrt(D)) / (2 * A);
+  let r2 = (E0 - sqrt(D)) / (2 * A);
 
+  let rMax = max(r1, r2);
+
+  // ✅ ΤΩΡΑ τα αποθηκεύεις (όχι πριν!)
+  rMin = r0;
+  rEqVal = rEq;
+  rMaxVal = rMax;
 }
 
 // ===== RESIZE =====
