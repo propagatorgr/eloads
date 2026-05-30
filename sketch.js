@@ -52,6 +52,7 @@ function windowResized() {
 
 // ===== DRAW =====
 function draw() {
+  updateFromSliders();
   background(230);
 
   drawEquilibriumLine();
@@ -157,3 +158,31 @@ function drawInfo() {
 function startSim() { running = true; }
 function resumeSim() { running = true; }
 function resetSim() { initSystem(); }
+function updateFromSliders() {
+  // τιμές sliders (Q και q σε μC → C)
+  Q = document.getElementById("Qslider").value * 1e-6;
+  q = document.getElementById("qslider").value * 1e-6;
+  m = parseFloat(document.getElementById("mslider").value);
+
+  // εμφάνιση τιμών
+  document.getElementById("Qval").innerText =
+    document.getElementById("Qslider").value;
+
+  document.getElementById("qval").innerText =
+    document.getElementById("qslider").value;
+
+  document.getElementById("mval").innerText =
+    document.getElementById("mslider").value;
+
+  adjustScale();   // ✅ κρίσιμο
+  initSystem();    // επανεκκίνηση
+}
+function adjustScale() {
+  // βρίσκουμε θέση ισορροπίας
+  let rEq = sqrt((k * Q * q) / (m * g));
+
+  // θέλουμε όλη η κίνηση να χωράει στο 60% του height
+  let maxRange = max(rEq, 0.5); // ασφάλεια
+
+  scale = (0.6 * height) / maxRange;
+}
