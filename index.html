@@ -28,8 +28,15 @@ body {
   gap: 10px;        /* απόσταση label–slider–value ✅ */
 }
 #controls {
-  padding: 10px;
-  background: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;   /* αν μικρύνει η οθόνη */
+}
+
+#legendInline {
+  margin-left: 20px;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -39,14 +46,28 @@ body {
 <div id="canvasContainer"></div>
 
 <div id="controls">
+
   <button onclick="startSim()">START</button>
   <button onclick="resumeSim()">RESUME</button>
   <button onclick="resetSim()">RESET</button>
-   <input type="checkbox" id="forcesCheckbox">
-    Εμφάνιση δυνάμεων
+
+  <label style="margin-left:10px;">
+    <input type="checkbox" id="forcesCheckbox">
+    Δυνάμεις
   </label>
-<br>
+
+  <div id="legendInline">
+    <span><b>F:</b></span>
+    <span style="color:green">Fc</span>
+    <span style="color:orange">w</span>
+
+    <span style="margin-left:15px;"><b>Q:</b></span>
+    <span style="color:red">Q</span>
+    <span style="color:blue">q</span>
+  </div>
+
 </div>
+
 <div id="sliders">
 
   <div class="sliderBlock">
