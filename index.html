@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Ηλεκτρική Ταλάντωση</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Canvas θα μπει εδώ -->
+  <div id="canvasContainer"></div>
+
+  <!-- Controls ΚΑΤΩ από canvas ✅ -->
+  <div style="margin-top:10px;">
+    <button onclick="startSim()">START</button>
+    <button onclick="resumeSim()">RESUME</button>
+    <button onclick="resetSim()">RESET</button>
+
+    <label style="margin-left:20px;">
+      <input type="checkbox" id="forcesCheckbox">
+      Εμφάνιση δυνάμεων
+    </label>
+  </div>
+
+  <script src="sketch.js"></script>
+
+</body>
+</html>
