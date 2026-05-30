@@ -19,7 +19,9 @@ let vMaxTheory;
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
-
+document.getElementById("Qslider").oninput = updateFromSliders;
+document.getElementById("qslider").oninput = updateFromSliders;
+document.getElementById("mslider").oninput = updateFromSliders;
   initSystem();
 }
 
@@ -52,8 +54,7 @@ function windowResized() {
 
 // ===== DRAW =====
 function draw() {
-  updateFromSliders();
-  background(230);
+   background(230);
 
   drawEquilibriumLine();
 
