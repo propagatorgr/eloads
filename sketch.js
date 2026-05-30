@@ -20,17 +20,16 @@ let yEq;
 // p5 SETUP
 // =====================
 function setup() {
-  let canvas = createCanvas(600, 600);
+  let canvas = createCanvas(windowWidth, windowHeight - 70);
   canvas.parent("canvasContainer");
 
-  yQ = height - 80;
+  yQ = height - 120;
 
   resetSimulation();
 
   let rEq = sqrt((k * Q * q) / (m * g));
   yEq = yQ - rEq * scale;
 }
-
 // =====================
 // LOOP
 // =====================
@@ -96,33 +95,34 @@ function drawForces() {
   let Fc = k * Q * q / (r * r);
   let Fg = m * g;
 
-  let scaleF = 20; // scale βελών
+  let scaleF = 0.05; // ✅ ΜΕΓΑΛΑ ΒΕΛΗ ΤΩΡΑ
 
   // Coulomb (πάνω)
   stroke('green');
-  strokeWeight(2);
+  strokeWeight(3);
   line(width / 2, y,
        width / 2,
-       y - Fc / scaleF);
+       y - Fc * scaleF);
 
-  drawArrowHead(width / 2, y - Fc / scaleF, -1, 'green');
+  drawArrowHead(width / 2, y - Fc * scaleF, -1, 'green');
 
   // Βάρος (κάτω)
   stroke('orange');
   line(width / 2, y,
        width / 2,
-       y + Fg / scaleF);
+       y + Fg * scaleF);
 
-  drawArrowHead(width / 2, y + Fg / scaleF, 1, 'orange');
+  drawArrowHead(width / 2, y + Fg * scaleF, 1, 'orange');
 
   // labels
   noStroke();
   fill('green');
-  text("Fc", width / 2 + 5, y - Fc / scaleF);
+  text("Fc", width / 2 + 8, y - Fc * scaleF);
 
   fill('orange');
-  text("w", width / 2 + 5, y + Fg / scaleF);
+  text("w", width / 2 + 8, y + Fg * scaleF);
 }
+
 
 function drawArrowHead(x, y, dir, col) {
   fill(col);
@@ -181,4 +181,12 @@ function resetSimulation() {
   prevV = 0;
 
   running = false;
+}
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight - 70);
+
+  yQ = height - 120;
+
+  let rEq = sqrt((k * Q * q) / (m * g));
+  yEq = yQ - rEq * scale;
 }
