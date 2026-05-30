@@ -216,7 +216,21 @@ function updateFromSliders() {
   Q = document.getElementById("Qslider").value * 1e-6;
   q = document.getElementById("qslider").value * 1e-6;
   m = parseFloat(document.getElementById("mslider").value);
+let r0 = 0.3;
 
+// Υπολογισμός r_eq
+let rEqTemp = Math.sqrt((k * Q * q) / (m * g));
+
+// Αν δεν υπάρχει ταλάντωση → διορθώνουμε το q
+if (rEqTemp <= r0) {
+
+  q = (m * g * r0 * r0) / (k * Q);
+  q = q * 1.2;   // μικρό περιθώριο
+
+  // ενημέρωση slider
+  document.getElementById("qslider").value = q * 1e6;
+  document.getElementById("qval").innerText = (q * 1e6).toFixed(1);
+}
   // εμφάνιση τιμών
   document.getElementById("Qval").innerText =
     document.getElementById("Qslider").value;
