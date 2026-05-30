@@ -176,11 +176,14 @@ function updateFromSliders() {
   initSystem();    // επανεκκίνηση
 }
 function adjustScale() {
-  // βρίσκουμε θέση ισορροπίας
+
+  let r0 = 0.3; // αρχική απόσταση
+
   let rEq = sqrt((k * Q * q) / (m * g));
 
-  // θέλουμε όλη η κίνηση να χωράει στο 60% του height
-  let maxRange = max(rEq, 0.5); // ασφάλεια
-
-  scale = (0.6 * height) / maxRange;
+  // μέγιστη απόσταση που μπορεί να φτάσει (~ συμμετρική εκτίμηση)
+ 
+let rMax = max(r0, 2.5 * rEq);
+  // αφήνουμε περιθώριο (60% canvas)
+  scale = (0.6 * height) / rMax;
 }
