@@ -3,6 +3,7 @@ let q = 20e-6;
 let m = 0.1;
 let g = 10;
 let k = 9e9;
+let rMin, rEqVal, rMaxVal;
 
 let yQ, y, v = 0, a = 0;
 let prevV = 0;
@@ -28,6 +29,9 @@ document.getElementById("mslider").oninput = updateFromSliders;
 // ===== INIT =====
 function initSystem() {
   yQ = height - 120;
+  rMin = r0;
+rEqVal = rEq;
+rMaxVal = rMax;
 
   let d = 0.3;
   y = yQ - d * scale;
@@ -44,6 +48,28 @@ function initSystem() {
   let Ueq = m * g * rEq + k * Q * q / rEq;
 
   vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
+  let r0 = 0.3;
+
+// r_eq
+let rEq = sqrt((k * Q * q) / (m * g));
+
+// r_max από ενέργεια
+let A = m * g;
+let B = k * Q * q;
+
+// λύση εξίσωσης: A r^2 - E r + B = 0
+let E0 = A * r0 + B / r0;
+
+// διακρίνουσα
+let D = E0 * E0 - 4 * A * B;
+
+// δύο λύσεις
+let r1 = (E0 + sqrt(D)) / (2 * A);
+let r2 = (E0 - sqrt(D)) / (2 * A);
+
+// θέλουμε τη μεγαλύτερη
+let rMax = max(r1, r2);
+
 }
 
 // ===== RESIZE =====
@@ -129,9 +155,6 @@ function arrow(x, y, dir, col) {
   triangle(x - 6, y, x + 6, y, x, y + dir * 10);
 }
 
-// ===== ENERGY DIAGRAM =====
-
-
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
   stroke(0);
@@ -145,10 +168,16 @@ function drawEquilibriumLine() {
 }
 
 // ===== INFO =====
+
 function drawInfo() {
   fill(0);
   noStroke();
   textSize(16);
+
+  text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
+  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
+  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
+
   text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
 }
 
