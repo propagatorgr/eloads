@@ -48,7 +48,7 @@ rMaxVal = rMax;
   let Ueq = m * g * rEq + k * Q * q / rEq;
 
   vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
-  let r0 = 0.3;
+ 
 
 // r_eq
 let rEq = sqrt((k * Q * q) / (m * g));
