@@ -12,102 +12,32 @@ body {
   font-family: Arial;
 }
 
-/* ✅ FIX ΓΙΑ ΟΛΕΣ ΤΙΣ ΑΝΑΛΥΣΕΙΣ (ΟΧΙ ΜΟΝΟ MOBILE) */
-.valBox {
-  display: inline-block;
-  width: 45px;
-  text-align: right;
-  font-weight: bold;
-}
-
-/* ===== DESKTOP ===== */
-#sliders {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 0 30px;
-}
-
-.sliderBlock {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 #controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   flex-wrap: wrap;
-  padding: 8px 20px;
+  padding: 10px 20px;
 }
 
-#legendInline {
+#scenarioRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   margin-left: 20px;
-  font-size: 14px;
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-
-  #controls {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px 15px;
-    gap: 10px;
-  }
-
-  #controls button {
-    width: 100%;
-    font-size: 16px;
-    padding: 12px;
-    border-radius: 6px;
-  }
-
-  #controls label {
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  #controls input[type="checkbox"] {
-    transform: scale(1.3);
-  }
-
-  #legendInline {
-    margin-left: 0;
-    font-size: 14px;
-    line-height: 1.4;
-  }
-
-  #sliders {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 18px;
-    padding: 10px 15px;
-  }
-
-  .sliderBlock {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .sliderBlock input[type="range"] {
-    width: 100%;
-    height: 30px;
-  }
-
-  /* ✅ το κρατάμε και εδώ για σιγουριά */
-  .valBox {
-    width: 50px;
-    font-size: 15px;
-  }
+/* τιμές δεξιά */
+#values {
+  margin-left: 20px;
+  font-weight: bold;
 }
 
+select {
+  padding: 5px;
+}
 </style>
+
 </head>
 
 <body>
@@ -115,44 +45,28 @@ body {
 <div id="canvasContainer"></div>
 
 <div id="controls">
+
   <button onclick="startSim()">Ξεκίνα</button>
   <button onclick="resumeSim()">Μέχρι άκρο</button>
   <button onclick="resetSim()">Επανεκκίνηση</button>
 
-  <label style="margin-left:10px;">
+  <label>
     <input type="checkbox" id="forcesCheckbox">
     Δυνάμεις
   </label>
 
-  <div id="legendInline">
-    <span><b>F:</b></span>
-    <span style="color:green">Fc</span>
-    <span style="color:orange">w</span>
+  <div id="scenarioRow">
+    Σενάριο:
+    <select id="scenarioSelect" onchange="applyScenario()">
+      <option value="base">Βασική ταλάντωση</option>
+      <option value="equilibrium">Ισορροπία</option>
+      <option value="small">Μικρή ταλάντωση</option>
+      <option value="large">Μεγάλη ταλάντωση</option>
+    </select>
 
-    <span style="margin-left:15px;"><b>Q:</b></span>
-    <span style="color:red">Q</span>
-    <span style="color:blue">q</span>
-  </div>
-</div>
-
-<div id="sliders">
-
-  <div class="sliderBlock">
-    Q (μC):
-    <input type="range" id="Qslider" min="1" max="10" step="0.5" value="2">
-    <span id="Qval" class="valBox">2</span>
-  </div>
-
-  <div class="sliderBlock">
-    q (μC):
-    <input type="range" id="qslider" min="5" max="50" step="1" value="20">
-    <span id="qval" class="valBox">20</span>
-  </div>
-
-  <div class="sliderBlock">
-    m (kg):
-    <input type="range" id="mslider" min="0.05" max="0.5" step="0.01" value="0.1">
-    <span id="mval" class="valBox">0.1</span>
+    <div id="values">
+      Q=2 μC | q=20 μC | m=0.10 kg | d=0.30 m
+    </div>
   </div>
 
 </div>
@@ -161,3 +75,4 @@ body {
 
 </body>
 </html>
+``
