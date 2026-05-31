@@ -1,6 +1,6 @@
 let Q, q, m, d;
 let stepTarget = null;
-
+let vMaxTheory;
 let R_visual = 20;
 let R_phys;
 
@@ -89,7 +89,10 @@ function initSystem() {
 
   let r1 = (E0 + sqrt(D)) / (2 * A);
   let r2 = (E0 - sqrt(D)) / (2 * A);
+  let Ueq = m * g * rEqVal + k * Q * q / rEqVal;
+let E0 = m * g * d + k * Q * q / d;
 
+vMaxTheory = sqrt((2 / m) * (E0 - Ueq));
   if (d > rEq) {
     rMaxVal = d;
     rMin = min(r1, r2);
@@ -294,6 +297,7 @@ function drawInfo() {
   text("r_eq = " + nf(rEqVal,1,2), 20, y0+40);
   text("r_max = " + nf(rMaxVal,1,2), 20, y0+60);
   text("v = " + nf(v,1,2), 20, y0+80);
+  text("v_max = " + nf(vMaxTheory,1,2), 20, y0+100);
 }
 
 // ===== BUTTONS =====
