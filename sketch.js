@@ -305,9 +305,34 @@ function resumeSim() {
 }
 
 function resetSim() {
+
+  // ✅ επαναφορά sliders (UI)
+  document.getElementById("Qslider").value = 2;
+  document.getElementById("qslider").value = 20;
+  document.getElementById("mslider").value = 0.1;
+
+  // ✅ ενημέρωση labels
+  document.getElementById("Qval").innerText = 2;
+  document.getElementById("qval").innerText = 20;
+  document.getElementById("mval").innerText = 0.1;
+
+  // ✅ επαναφορά φυσικών μεγεθών
+  Q = 2e-6;
+  q = 20e-6;
+  m = 0.1;
   d = 0.3;
+
+  // ✅ reset ταχύτητας
+  v = 0;
+
+  // ✅ reset mode
+  running = false;
+  continuousMode = false;
+
+  // ✅ επανυπολογισμός συστήματος
   initSystem();
 }
+
 
 // ===== SCALE =====
 function adjustScale() {
