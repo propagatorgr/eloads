@@ -19,6 +19,11 @@ let scale = 250;
 let yEq;
 let vMaxTheory;
 
+// ===== margin =====
+function getMargin() {
+  return max(180, width * 0.2);
+}
+
 // ===== SETUP =====
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
@@ -37,7 +42,7 @@ function initSystem() {
   let yGround = height - 40;
   yQ = yGround - 10;
 
-  // --- ΦΥΣΙΚΗ ---
+  // ===== ΦΥΣΙΚΗ =====
   let rEq = sqrt((k * Q * q) / (m * g));
   rEqVal = rEq;
 
@@ -50,7 +55,7 @@ function initSystem() {
   let r1 = (E0 + sqrt(D)) / (2 * A);
   let r2 = (E0 - sqrt(D)) / (2 * A);
 
-  // ✅ αποφασίζουμε ποιο είναι min / max
+  // ✅ ΣΩΣΤΟ: το d είναι ένα από τα άκρα
   if (d > rEq) {
     rMaxVal = d;
     rMin = min(r1, r2);
@@ -59,7 +64,7 @@ function initSystem() {
     rMaxVal = max(r1, r2);
   }
 
-  // ✅ ΚΛΙΜΑΚΑ
+  // ===== SCALE =====
   adjustScale();
 
   // ✅ mapping
@@ -85,11 +90,10 @@ function enforceLimits() {
     rMin = 0.05;
   }
 
-  // αποφυγή εξόδου από οθόνη
-  let maxScreen = height / scale;
-
-  if (rMaxVal > maxScreen) {
-    rMaxVal = maxScreen;
+  // αποφυγή εξόδου εκτός canvas
+  let maxR = height / scale;
+  if (rMaxVal > maxR) {
+    rMaxVal = maxR;
   }
 }
 
@@ -98,7 +102,6 @@ function draw() {
   background(230);
 
   drawGround();
-
   drawEquilibriumLine();
 
   if (running) updatePhysics();
@@ -141,14 +144,16 @@ function drawCharges() {
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
 
+  let marginLeft = getMargin();
+
   stroke(0);
   drawingContext.setLineDash([6, 6]);
-  line(0, yEq, width, yEq);
+  line(marginLeft, yEq, width, yEq);
   drawingContext.setLineDash([]);
 
   noStroke();
   fill(0);
-  text("Θέση ισορροπίας", 10, yEq - 5);
+  text("Θέση ισορροπίας", marginLeft + 5, yEq - 5);
 }
 
 // ===== INFO =====
@@ -160,13 +165,16 @@ function drawInfo() {
   fill(continuousMode ? 'green' : 'blue');
   text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
-  fill(0);
+  if (rMaxVal > 5) {
+    fill('red');
+    text("⚠ Μεγάλο εύρος ταλάντωσης", 20, height - 115);
+  }
 
+  fill(0);
   text("d = " + nf(d, 1, 2) + " m", 20, height - 100);
   text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
   text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
   text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
-
   text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
 }
 
@@ -219,12 +227,19 @@ function adjustScale() {
 function drawGround() {
 
   let yGround = height - 40;
+  let marginLeft = getMargin();
 
   stroke(100);
   strokeWeight(4);
-  line(0, yGround, width, yGround);
+  line(marginLeft, yGround, width, yGround);
+
+  stroke(140);
+  strokeWeight(2);
+  for (let x = marginLeft; x < width; x += 12) {
+    line(x, yGround, x + 6, yGround);
+  }
 
   noStroke();
   fill(0);
-  text("Έδαφος", 10, yGround - 5);
+  text("Έδαφος", marginLeft + 10, yGround - 5);
 }
