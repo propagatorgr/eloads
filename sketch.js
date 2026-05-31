@@ -315,7 +315,7 @@ function resetSim() {
 function adjustScale() {
   let range = rMaxVal;
   if (range < 0.1) range = 0.1;
-  scale = (0.6 * height) / range;
+  scale = height * 0.4;
 }
 
 // ===== GROUND =====
