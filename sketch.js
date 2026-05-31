@@ -167,21 +167,17 @@ function drawEquilibriumLine() {
 // ===== INFO =====
 function drawInfo() {
 
-  let marginLeft = getMargin();
-
   noStroke();
   textSize(16);
 
-  // Mode
   fill(continuousMode ? 'green' : 'blue');
-  text(continuousMode ? "Mode: Continuous" : "Mode: Step", marginLeft, 30);
+  text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
-  // Μετρήσεις
   fill(0);
-  text("r_min = " + nf(rMin, 1, 2) + " m", marginLeft, height - 80);
-  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", marginLeft, height - 60);
-  text("r_max = " + nf(rMaxVal, 1, 2) + " m", marginLeft, height - 40);
-  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", marginLeft, height - 20);
+  text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
+  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
+  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
+  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
 }
 
 // ===== BUTTONS =====
