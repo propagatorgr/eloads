@@ -103,7 +103,7 @@ function draw() {
 
   drawGround();
   drawEquilibriumLine();
-
+  drawExtremes();   // ✅ προσθήκη
   if (running) updatePhysics();
 
   drawCharges();
@@ -242,4 +242,31 @@ function drawGround() {
   noStroke();
   fill(0);
   text("Έδαφος", marginLeft + 10, yGround - 5);
+}
+function drawExtremes() {
+
+  let marginLeft = getMargin();
+
+  let yMin = yQ - rMin * scale;
+  let yMax = yQ - rMaxVal * scale;
+
+  drawingContext.setLineDash([3, 6]);
+
+  // ✅ r_min (π.χ. καφέ ή μπλε)
+  stroke('blue');
+  line(marginLeft, yMin, width, yMin);
+
+  // ✅ r_max (π.χ. μωβ ή κόκκινο)
+  stroke('purple');
+  line(marginLeft, yMax, width, yMax);
+
+  drawingContext.setLineDash([]);
+
+  // labels
+  noStroke();
+  fill(60);
+  textSize(13);
+
+  text("r_min", marginLeft + 5, yMin - 5);
+  text("r_max", marginLeft + 5, yMax - 5);
 }
