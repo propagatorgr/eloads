@@ -236,17 +236,7 @@ function updateFromSliders() {
   initSystem();
 }
 
-// update labels
-document.getElementById("Qval").innerText =
-  document.getElementById("Qslider").value;
 
-document.getElementById("qval").innerText =
-  document.getElementById("qslider").value;
-
-document.getElementById("mval").innerText =
-  document.getElementById("mslider").value;
-
-}
 // ===== SCALE =====
 function adjustScale() {
 
