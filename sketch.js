@@ -183,10 +183,18 @@ function updatePhysics() {
 
 let eps = 0.005;
 
+
 if (!continuousMode) {
-  if (stepTarget === "max" && abs(r - rMaxVal) < eps) running = false;
-  if (stepTarget === "min" && abs(r - rSafeMin) < eps) running = false;
+  if (stepTarget === "goingUp" && v <= 0) {
+    running = false;
+    v = 0;
+  }
+  if (stepTarget === "goingDown" && v >= 0) {
+    running = false;
+    v = 0;
+  }
 }
+
 }
 
 // ===== OBJECTS =====
@@ -298,7 +306,7 @@ function resumeSim() {
   continuousMode = false;
 
   let r = (yQ - y) / scale;
-  stepTarget = (r < rEqVal) ? "max" : "min";
+  stepTarget = (r < rEqVal) ? "goingUp" : "goingDown";
 
   running = true;
 }
