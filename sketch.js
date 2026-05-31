@@ -259,17 +259,23 @@ let rMax = max(r0, 2.5 * rEq);
 }
 function drawGround() {
 
-  let yGround = height - 40;   // θέση εδάφους
+  let yGround = height - 40;
 
-  // γραμμή εδάφους
+  // δυναμικός χώρος για τα κείμενα (αριστερά)
+  let marginLeft = max(180, width * 0.2);   // ✅ προσαρμόζεται στην οθόνη
+
+  let xStart = marginLeft;
+  let xEnd = width;
+
+  // βασική γραμμή
   stroke(100);
   strokeWeight(4);
-  line(0, yGround, width, yGround);
+  line(xStart, yGround, xEnd, yGround);
 
-  // μικρό “texture” (προαιρετικό αλλά ωραίο)
+  // "υφή" εδάφους
   stroke(140);
   strokeWeight(2);
-  for (let x = 0; x < width; x += 12) {
+  for (let x = xStart; x < xEnd; x += 12) {
     line(x, yGround, x + 6, yGround);
   }
 
@@ -277,6 +283,6 @@ function drawGround() {
   noStroke();
   fill(0);
   textSize(14);
-  text("Έδαφος", 10, yGround - 5);
+  text("Έδαφος", xStart + 10, yGround - 5);
 }
 
