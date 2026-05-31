@@ -165,9 +165,18 @@ function updatePhysics() {
   v = 0;   // ✅
   y = yQ - r * scale;
 }
-  if (!continuousMode) {
-  if (r <= max(rMin, R_phys) || r >= rMaxVal) {
+ if (!continuousMode) {
+
+  // αν πάς προς τα κάτω
+  if (v < 0 && r <= rSafeMin) {
     running = false;
+    v = 0;
+  }
+
+  // αν πάς προς τα πάνω
+  if (v > 0 && r >= rMaxVal) {
+    running = false;
+    v = 0;
   }
 }
 }
