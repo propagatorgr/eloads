@@ -113,22 +113,45 @@ function draw() {
 // ===== PHYSICS =====
 function updatePhysics() {
 
+  // υπολογισμός r
   let r = (yQ - y) / scale;
 
+  // δυνάμεις
   let Fc = k * Q * q / (r * r);
   let F = Fc - m * g;
 
   let dt = 0.01;
 
+  // ταχύτητα
   prevV = v;
   v += (F / m) * dt;
 
+  // θέση
   y -= v * dt * scale;
 
+  // ✅ ΕΠΑΝΥΠΟΛΟΓΙΣΜΟΣ r μετά την κίνηση
+  r = (yQ - y) / scale;
+
+  // ✅ clamp στο r_min (ΚΑΤΩ άκρο)
+  if (r < rMin) {
+    r = rMin;
+    v = 0;
+    y = yQ - r * scale;
+  }
+
+  // ✅ clamp στο r_max (ΠΑΝΩ άκρο)
+  if (r > rMaxVal) {
+    r = rMaxVal;
+    v = 0;
+    y = yQ - r * scale;
+  }
+
+  // stop στο step mode
   if (!continuousMode && prevV * v < 0) {
     running = false;
   }
 }
+
 
 // ===== OBJECTS =====
 function drawCharges() {
