@@ -239,13 +239,24 @@ function resetSim() {
 // ===== SLIDERS =====
 function updateFromSliders() {
 
+  // τιμές sliders
   Q = document.getElementById("Qslider").value * 1e-6;
   q = document.getElementById("qslider").value * 1e-6;
   m = parseFloat(document.getElementById("mslider").value);
 
+  // ✅ ΖΩΝΤΑΝΗ ΕΝΗΜΕΡΩΣΗ ΤΙΜΩΝ
+  document.getElementById("Qval").innerText =
+    document.getElementById("Qslider").value;
+
+  document.getElementById("qval").innerText =
+    document.getElementById("qslider").value;
+
+  document.getElementById("mval").innerText =
+    document.getElementById("mslider").value;
+
+  // επανυπολογισμός
   initSystem();
 }
-
 // ===== SCALE =====
 function adjustScale() {
 
