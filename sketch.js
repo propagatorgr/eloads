@@ -28,9 +28,9 @@ document.getElementById("mslider").oninput = updateFromSliders;
 
 // ===== INIT =====
 function initSystem() {
-
-  yQ = height - 120;
-
+  let yGround = height - 40;
+yQ = yGround - 10;   // ακτίνα φορτίου = 10px
+ 
   let r0 = 0.3;   // ✅ ΠΡΩΤΑ
 
   y = yQ - r0 * scale;
@@ -257,3 +257,26 @@ let rMax = max(r0, 2.5 * rEq);
   
   scale = (0.8 * height) / (1 + rEq);
 }
+function drawGround() {
+
+  let yGround = height - 40;   // θέση εδάφους
+
+  // γραμμή εδάφους
+  stroke(100);
+  strokeWeight(4);
+  line(0, yGround, width, yGround);
+
+  // μικρό “texture” (προαιρετικό αλλά ωραίο)
+  stroke(140);
+  strokeWeight(2);
+  for (let x = 0; x < width; x += 12) {
+    line(x, yGround, x + 6, yGround);
+  }
+
+  // label
+  noStroke();
+  fill(0);
+  textSize(14);
+  text("Έδαφος", 10, yGround - 5);
+}
+
