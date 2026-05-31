@@ -242,11 +242,16 @@ function updateFromSliders() {
 
 // ===== SCALE =====
 function adjustScale() {
+
   let r0 = 0.3;
   let rEq = sqrt((k * Q * q) / (m * g));
-  scale = (0.8 * height) / (1 + rEq);
-}
 
+  // εκτίμηση άνω άκρου
+  let rMax = max(r0, 3 * rEq);
+
+  // ✅ scale πάνω σε όλο το εύρος
+  scale = (0.6 * height) / rMax;
+}
 // ===== GROUND =====
 function drawGround() {
 
