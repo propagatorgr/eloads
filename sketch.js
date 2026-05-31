@@ -90,7 +90,7 @@ function initSystem() {
   let r1 = (E0 + sqrt(D)) / (2 * A);
   let r2 = (E0 - sqrt(D)) / (2 * A);
   let Ueq = m * g * rEqVal + k * Q * q / rEqVal;
-let E0 = m * g * d + k * Q * q / d;
+
 
 vMaxTheory = sqrt((2 / m) * (E0 - Ueq));
   if (d > rEq) {
