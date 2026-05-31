@@ -164,6 +164,11 @@ function drawCharges() {
 
   fill('blue');
   ellipse(width / 2, y, 20);
+  
+ if (document.getElementById("forcesCheckbox").checked) {
+    drawForces();
+  }
+
 }
 
 // ===== EQUILIBRIUM =====
