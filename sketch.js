@@ -1,7 +1,7 @@
 let Q = 2e-6;
 let q = 20e-6;
 let m = 0.1;
-
+let targetExtreme = null;
 let R_visual = 20;
 let R_phys;
 
@@ -165,13 +165,16 @@ function updatePhysics() {
   v = 0;   // ✅
   y = yQ - r * scale;
 }
- if (!continuousMode) {
+if (!continuousMode && targetExtreme !== null) {
 
-  // αν πάς προς τα κάτω
-  if (v < 0 && r <= rSafeMin) {
+  let r = (yQ - y) / scale;
+
+  if (abs(r - targetExtreme) < 0.005) {
     running = false;
     v = 0;
+    targetExtreme = null;
   }
+}
 
   // αν πάς προς τα πάνω
   if (v > 0 && r >= rMaxVal) {
@@ -311,10 +314,28 @@ function startSim() {
 
 
 function resumeSim() {
+
   continuousMode = false;
+
+  let r = (yQ - y) / scale;
+
+  // ✅ αν είσαι κάτω → πήγαινε πάνω
+  if (abs(r - rMin) < 1e-4) {
+    targetExtreme = rMaxVal;
+  }
+  // ✅ αν είσαι πάνω → πήγαινε κάτω
+  else if (abs(r - rMaxVal) < 1e-4) {
+    targetExtreme = max(rMin, R_phys);
+  }
+  // ✅ ενδιάμεσα → διάλεξε πιο κοντινό
+  else if (r < rEqVal) {
+    targetExtreme = rMaxVal;
+  } else {
+    targetExtreme = max(rMin, R_phys);
+  }
+
   running = true;
 }
-
 function resetSim() {
 
   // ✅ επαναφορά sliders (UI)
