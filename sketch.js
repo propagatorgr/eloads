@@ -303,3 +303,31 @@ function drawExtremes() {
   text("r_min", marginLeft + 5, yMin - 5);
   text("r_max", marginLeft + 5, yMax - 5);
 }
+function drawForces() {
+
+  let r = (yQ - y) / scale;
+
+  let Fc = k * Q * q / (r * r);
+  let Fg = m * g;
+
+  let scaleF = 25;
+
+  strokeWeight(4);
+
+  // Coulomb
+  stroke('green');
+  line(width / 2, y, width / 2, y - Fc * scaleF);
+  arrow(width / 2, y - Fc * scaleF, -1, 'green');
+
+  // Βάρος
+  stroke('orange');
+  line(width / 2, y, width / 2, y + Fg * scaleF);
+  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
+}
+
+function arrow(x, y, dir, col) {
+  fill(col);
+  noStroke();
+  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
+}
+
