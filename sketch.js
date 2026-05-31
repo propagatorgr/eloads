@@ -173,6 +173,12 @@ function drawInfo() {
   fill(continuousMode ? 'green' : 'blue');
   text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
+// ✅ WARNING γιa μεγάλο εύρος
+  if (rMaxVal > 5) {
+    fill('red');
+    text("⚠ Μεγάλο εύρος ταλάντωσης", 20, height - 110);
+  }
+
   fill(0);
   text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
   text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
@@ -208,26 +214,26 @@ function resetSim() {
   adjustScale();
   initSystem();
 }
-function updateFromSliders ( ){
-// ===== SLIDERS =====
-let r0 = 0.3;
-let rEqTemp = Math.sqrt((k * Q * q) / (m * g));
+function updateFromSliders() {
 
-// ✅ Κάτω όριο (υπάρχει ήδη)
-if (rEqTemp <= 1.2 * r0) {
+  // ✅ παίρνουμε τις τιμές όπως τις δίνει ο χρήστης
+  Q = document.getElementById("Qslider").value * 1e-6;
+  q = document.getElementById("qslider").value * 1e-6;
+  m = parseFloat(document.getElementById("mslider").value);
 
-  q = (m * g * r0 * r0) / (k * Q);
-  q = q * 1.3;
+  // ✅ ενημέρωση labels
+  document.getElementById("Qval").innerText =
+    document.getElementById("Qslider").value;
 
-  document.getElementById("qslider").value = q * 1e6;
-}
+  document.getElementById("qval").innerText =
+    document.getElementById("qslider").value;
 
-// ✅ ΠΑΝΩ ΟΡΙΟ (ΝΕΟ 🔥)
-if (rEqTemp > 3 * r0) {
+  document.getElementById("mval").innerText =
+    document.getElementById("mslider").value;
 
-  q = (m * g * (3 * r0) * (3 * r0)) / (k * Q);
-
-  document.getElementById("qslider").value = q * 1e6;
+  // ✅ rendering only (όχι φυσική!)
+  adjustScale();
+  initSystem();
 }
 
 // update labels
