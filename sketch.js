@@ -183,7 +183,8 @@ function drawEquilibriumLine() {
 
 // ===== INFO =====
 function drawInfo() {
-
+let y0 = height - 140;   // warning
+let yData = height - 100; // τιμές
   noStroke();
   textSize(16);
 
@@ -192,20 +193,16 @@ function drawInfo() {
 
   if (rMaxVal > 5) {
     fill('red');
-    
-text("⚠ Μεγάλο εύρος ταλάντωσης", 20, height - 125);
-text("δεν επιτρέπεται κίνηση", 20, height - 100);
-
+let y0 = height - 120;   // βάση
+  text("⚠ Μεγάλο εύρος ταλάντωσης", 20, y0);
+  text("δεν επιτρέπεται κίνηση", 20, y0 + 20);   // ✅ σχετική απόσταση
   }
-
   fill(0);
-  text("d = " + nf(d, 1, 2) + " m", 20, height - 100);
-  text("r_min = " + nf(rMin, 1, 2) + " m", 20, height - 80);
-  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
-  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
-  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
-  
-
+text("d = " + nf(d, 1, 2) + " m", 20, yData);
+text("r_min = " + nf(rMin, 1, 2) + " m", 20, yData + 20);
+text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, yData + 40);
+text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, yData + 60);
+text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, yData + 80);
 }
 
 // ===== BUTTONS =====
