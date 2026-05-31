@@ -313,3 +313,23 @@ function adjustScale() {
 
   scale = (0.6 * height) / range;
 }
+function drawGround() {
+
+  let yGround = height - 40;
+  let marginLeft = getMargin();
+
+  stroke(100);
+  strokeWeight(4);
+  line(marginLeft, yGround, width, yGround);
+
+  stroke(140);
+  strokeWeight(2);
+  for (let x = marginLeft; x < width; x += 12) {
+    line(x, yGround, x + 6, yGround);
+  }
+
+  noStroke();
+  fill(0);
+  text("Έδαφος", marginLeft + 10, yGround - 5);
+}
+
