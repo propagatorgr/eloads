@@ -181,10 +181,11 @@ function updatePhysics() {
     hitMax = true;
   }
 
-  // ✅ ΣΩΣΤΟ STEP (δουλεύει με clamp)
+let eps = 0.005;
+
 if (!continuousMode) {
-  if (stepTarget === "max" && hitMax) running = false;
-  if (stepTarget === "min" && hitMin) running = false;
+  if (stepTarget === "max" && abs(r - rMaxVal) < eps) running = false;
+  if (stepTarget === "min" && abs(r - rSafeMin) < eps) running = false;
 }
 }
 
