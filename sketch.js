@@ -13,10 +13,14 @@ let prevV = 0;
 let running = false;
 
 let scale = 250;
+
 let yEq;
 let vMaxTheory;
 
-// ✅ ΚΟΙΝΟ margin για ΟΛΑ
+// ✅ ΚΡΙΣΙΜΟ: offset σωστής γεωμετρίας
+let rOffset;
+
+// ===== margin =====
 function getMargin() {
   return max(180, width * 0.2);
 }
@@ -41,18 +45,8 @@ function initSystem() {
 
   let r0 = 0.3;
 
-  y = yQ - r0 * scale;
-
-  v = 0;
-  prevV = 0;
-  running = false;
-
+  // ✅ ΦΥΣΙΚΗ
   let rEq = sqrt((k * Q * q) / (m * g));
-  yEq = yQ - rEq * scale;
-
-  let U0 = m * g * r0 + k * Q * q / r0;
-  let Ueq = m * g * rEq + k * Q * q / rEq;
-  vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
 
   let A = m * g;
   let B = k * Q * q;
@@ -68,6 +62,25 @@ function initSystem() {
   rMin = r0;
   rEqVal = rEq;
   rMaxVal = rMax;
+
+  // ✅ OFFSET
+  rOffset = rMin;
+
+  // ✅ SCALE (render only)
+  adjustScale();
+
+  // ✅ σωστό mapping
+  y = yQ - (r0 - rOffset) * scale;
+  yEq = yQ - (rEq - rOffset) * scale;
+
+  v = 0;
+  prevV = 0;
+  running = false;
+
+  // vmax
+  let U0 = m * g * r0 + k * Q * q / r0;
+  let Ueq = m * g * rEq + k * Q * q / rEq;
+  vMaxTheory = sqrt((2 / m) * (U0 - Ueq));
 }
 
 // ===== RESIZE =====
@@ -91,7 +104,9 @@ function draw() {
 
 // ===== PHYSICS =====
 function updatePhysics() {
-  let r = (yQ - y) / scale;
+
+  // ✅ ΣΩΣΤΟ r
+  let r = (yQ - y) / scale + rOffset;
 
   let Fc = k * Q * q / (r * r);
   let F = Fc - m * g;
@@ -100,6 +115,7 @@ function updatePhysics() {
 
   prevV = v;
   v += (F / m) * dt;
+
   y -= v * dt * scale;
 
   if (!continuousMode && prevV * v < 0) {
@@ -125,7 +141,7 @@ function drawCharges() {
 
 // ===== FORCES =====
 function drawForces() {
-  let r = (yQ - y) / scale;
+  let r = (yQ - y) / scale + rOffset;
 
   let Fc = k * Q * q / (r * r);
   let Fg = m * g;
@@ -151,7 +167,6 @@ function arrow(x, y, dir, col) {
 
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
-
   let marginLeft = getMargin();
 
   stroke(0);
@@ -173,7 +188,6 @@ function drawInfo() {
   fill(continuousMode ? 'green' : 'blue');
   text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
-// ✅ WARNING γιa μεγάλο εύρος
   if (rMaxVal > 5) {
     fill('red');
     text("⚠ Μεγάλο εύρος ταλάντωσης", 20, height - 110);
@@ -198,7 +212,6 @@ function resumeSim() {
 }
 
 function resetSim() {
-
   document.getElementById("Qslider").value = 2;
   document.getElementById("qslider").value = 20;
   document.getElementById("mslider").value = 0.1;
@@ -211,17 +224,16 @@ function resetSim() {
   q = 20e-6;
   m = 0.1;
 
-  adjustScale();
   initSystem();
 }
+
+// ===== SLIDERS =====
 function updateFromSliders() {
 
-  // ✅ παίρνουμε τις τιμές όπως τις δίνει ο χρήστης
   Q = document.getElementById("Qslider").value * 1e-6;
   q = document.getElementById("qslider").value * 1e-6;
   m = parseFloat(document.getElementById("mslider").value);
 
-  // ✅ ενημέρωση labels
   document.getElementById("Qval").innerText =
     document.getElementById("Qslider").value;
 
@@ -231,27 +243,21 @@ function updateFromSliders() {
   document.getElementById("mval").innerText =
     document.getElementById("mslider").value;
 
-  // ✅ rendering only (όχι φυσική!)
-  adjustScale();
   initSystem();
 }
-
 
 // ===== SCALE =====
 function adjustScale() {
 
-  let r0 = 0.3;
-  let rEq = sqrt((k * Q * q) / (m * g));
+  let range = rMaxVal - rMin;
 
-  // εκτίμηση άνω άκρου
-  let rMax = max(r0, 3 * rEq);
+  if (range < 0.01) range = 0.01;
 
-  // ✅ scale πάνω σε όλο το εύρος
-  scale = (0.6 * height) / rMax;
+  scale = (0.6 * height) / range;
 }
+
 // ===== GROUND =====
 function drawGround() {
-
   let yGround = height - 40;
   let marginLeft = getMargin();
 
@@ -270,4 +276,3 @@ function drawGround() {
   textSize(14);
   text("Έδαφος", marginLeft + 10, yGround - 5);
 }
-
