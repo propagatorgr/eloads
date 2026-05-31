@@ -5,7 +5,7 @@ let m = 0.1;
 let g = 10;
 let k = 9e9;
 
-let d = 0.3;   // ✅ αρχική απόσταση
+let d = 0.3;
 
 let rMin, rEqVal, rMaxVal;
 
@@ -29,9 +29,35 @@ function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
-  document.getElementById("Qslider").oninput = updateFromSliders;
-  document.getElementById("qslider").oninput = updateFromSliders;
-  document.getElementById("mslider").oninput = updateFromSliders;
+  // ✅ ΖΩΝΤΑΝΑ labels
+  document.getElementById("Qslider").addEventListener("input", updateLabels);
+  document.getElementById("qslider").addEventListener("input", updateLabels);
+  document.getElementById("mslider").addEventListener("input", updateLabels);
+
+  // ✅ εφαρμογή φυσικής μόνο όταν αφήνεις
+  document.getElementById("Qslider").addEventListener("change", applySliders);
+  document.getElementById("qslider").addEventListener("change", applySliders);
+  document.getElementById("mslider").addEventListener("change", applySliders);
+
+  initSystem();
+}
+
+// ===== SLIDERS =====
+function updateLabels() {
+  document.getElementById("Qval").innerText =
+    document.getElementById("Qslider").value;
+
+  document.getElementById("qval").innerText =
+    document.getElementById("qslider").value;
+
+  document.getElementById("mval").innerText =
+    document.getElementById("mslider").value;
+}
+
+function applySliders() {
+  Q = document.getElementById("Qslider").value * 1e-6;
+  q = document.getElementById("qslider").value * 1e-6;
+  m = parseFloat(document.getElementById("mslider").value);
 
   initSystem();
 }
@@ -42,7 +68,6 @@ function initSystem() {
   let yGround = height - 40;
   yQ = yGround - 10;
 
-  // ===== ΦΥΣΙΚΗ =====
   let rEq = sqrt((k * Q * q) / (m * g));
   rEqVal = rEq;
 
@@ -55,7 +80,6 @@ function initSystem() {
   let r1 = (E0 + sqrt(D)) / (2 * A);
   let r2 = (E0 - sqrt(D)) / (2 * A);
 
-  // ✅ ΣΩΣΤΟ: το d είναι ένα από τα άκρα
   if (d > rEq) {
     rMaxVal = d;
     rMin = min(r1, r2);
@@ -64,10 +88,8 @@ function initSystem() {
     rMaxVal = max(r1, r2);
   }
 
-  // ===== SCALE =====
   adjustScale();
 
-  // ✅ mapping
   y = yQ - d * scale;
   yEq = yQ - rEq * scale;
 
@@ -75,26 +97,18 @@ function initSystem() {
   prevV = 0;
   running = false;
 
-  // vmax
   let Ueq = m * g * rEq + k * Q * q / rEq;
   vMaxTheory = sqrt((2 / m) * (E0 - Ueq));
 
   enforceLimits();
 }
 
-// ===== ΟΡΙΑ =====
+// ===== LIMITS =====
 function enforceLimits() {
+  if (rMin < 0.05) rMin = 0.05;
 
-  // αποφυγή σύγκρουσης
-  if (rMin < 0.05) {
-    rMin = 0.05;
-  }
-
-  // αποφυγή εξόδου εκτός canvas
   let maxR = height / scale;
-  if (rMaxVal > maxR) {
-    rMaxVal = maxR;
-  }
+  if (rMaxVal > maxR) rMaxVal = maxR;
 }
 
 // ===== DRAW =====
@@ -103,7 +117,8 @@ function draw() {
 
   drawGround();
   drawEquilibriumLine();
-  drawExtremes();   // ✅ προσθήκη
+  drawExtremes();
+
   if (running) updatePhysics();
 
   drawCharges();
@@ -112,8 +127,7 @@ function draw() {
 
 // ===== PHYSICS =====
 function updatePhysics() {
-  
-// ❗ STOP αν υπάρχει warning
+
   if (rMaxVal > 5) {
     running = false;
     return;
@@ -133,21 +147,18 @@ function updatePhysics() {
 
   r = (yQ - y) / scale;
 
-  // ✅ r_min
   if (r < rMin) {
     r = rMin;
     v *= -1;
     y = yQ - r * scale;
   }
 
-  // ✅ r_max
   if (r > rMaxVal) {
     r = rMaxVal;
     v *= -1;
     y = yQ - r * scale;
   }
 
-  // ✅ step mode
   if (!continuousMode) {
     if (r <= rMin || r >= rMaxVal) {
       running = false;
@@ -164,11 +175,38 @@ function drawCharges() {
 
   fill('blue');
   ellipse(width / 2, y, 20);
-  
- if (document.getElementById("forcesCheckbox").checked) {
+
+  if (document.getElementById("forcesCheckbox").checked) {
     drawForces();
   }
+}
 
+// ===== FORCES =====
+function drawForces() {
+
+  let r = (yQ - y) / scale;
+
+  let Fc = k * Q * q / (r * r);
+  let Fg = m * g;
+
+  let scaleF = 25;
+
+  strokeWeight(4);
+
+  stroke('green');
+  line(width / 2, y, width / 2, y - Fc * scaleF);
+  arrow(width / 2, y - Fc * scaleF, -1, 'green');
+
+  stroke('orange');
+  line(width / 2, y, width / 2, y + Fg * scaleF);
+  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
+}
+
+// ===== ARROW =====
+function arrow(x, y, dir, col) {
+  fill(col);
+  noStroke();
+  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
 }
 
 // ===== EQUILIBRIUM =====
@@ -186,29 +224,58 @@ function drawEquilibriumLine() {
   text("Θέση ισορροπίας", marginLeft + 5, yEq - 5);
 }
 
+// ===== EXTREMES =====
+function drawExtremes() {
+
+  let marginLeft = getMargin();
+
+  let yMin = yQ - rMin * scale;
+  let yMax = yQ - rMaxVal * scale;
+
+  drawingContext.setLineDash([3, 6]);
+
+  stroke('blue');
+  line(marginLeft, yMin, width, yMin);
+
+  stroke('purple');
+  line(marginLeft, yMax, width, yMax);
+
+  drawingContext.setLineDash([]);
+
+  noStroke();
+  fill(60);
+  textSize(13);
+
+  text("r_min", marginLeft + 5, yMin - 5);
+  text("r_max", marginLeft + 5, yMax - 5);
+}
+
 // ===== INFO =====
 function drawInfo() {
-let y0 = height - 140;   // warning
-let yData = height - 100; // τιμές
+
   noStroke();
   textSize(16);
 
   fill(continuousMode ? 'green' : 'blue');
   text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
+  let y0 = height - 140;
+  let yData = height - 100;
+
   if (rMaxVal > 5) {
     fill('red');
-let y0 = height - 120;   // βάση
-  text("⚠ Μεγάλο εύρος ταλάντωσης", 20, y0);
-  text("δεν επιτρέπεται κίνηση", 20, y0 + 20);   // ✅ σχετική απόσταση
+    text("⚠ Μεγάλο εύρος ταλάντωσης", 20, y0);
+    text("δεν επιτρέπεται κίνηση", 20, y0 + 20);
+
+    yData = y0 + 60;
   }
-  yData = y0 + 60;
+
   fill(0);
-text("d = " + nf(d, 1, 2) + " m", 20, yData);
-text("r_min = " + nf(rMin, 1, 2) + " m", 20, yData + 20);
-text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, yData + 40);
-text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, yData + 60);
-text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, yData + 80);
+  text("d = " + nf(d, 1, 2) + " m", 20, yData);
+  text("r_min = " + nf(rMin, 1, 2) + " m", 20, yData + 20);
+  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, yData + 40);
+  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, yData + 60);
+  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, yData + 80);
 }
 
 // ===== BUTTONS =====
@@ -228,6 +295,8 @@ function resetSim() {
   document.getElementById("qslider").value = 20;
   document.getElementById("mslider").value = 0.1;
 
+  updateLabels();
+
   Q = 2e-6;
   q = 20e-6;
   m = 0.1;
@@ -236,109 +305,11 @@ function resetSim() {
   initSystem();
 }
 
-// ===== SLIDERS =====
-function updateFromSliders() {
-
-  // τιμές sliders
-  Q = document.getElementById("Qslider").value * 1e-6;
-  q = document.getElementById("qslider").value * 1e-6;
-  m = parseFloat(document.getElementById("mslider").value);
-
-  // ✅ ΖΩΝΤΑΝΗ ΕΝΗΜΕΡΩΣΗ ΤΙΜΩΝ
-  document.getElementById("Qval").innerText =
-    document.getElementById("Qslider").value;
-
-  document.getElementById("qval").innerText =
-    document.getElementById("qslider").value;
-
-  document.getElementById("mval").innerText =
-    document.getElementById("mslider").value;
-
-  // επανυπολογισμός
-  initSystem();
-}
 // ===== SCALE =====
 function adjustScale() {
 
   let range = rMaxVal;
-
   if (range < 0.1) range = 0.1;
 
   scale = (0.6 * height) / range;
 }
-
-// ===== GROUND =====
-function drawGround() {
-
-  let yGround = height - 40;
-  let marginLeft = getMargin();
-
-  stroke(100);
-  strokeWeight(4);
-  line(marginLeft, yGround, width, yGround);
-
-  stroke(140);
-  strokeWeight(2);
-  for (let x = marginLeft; x < width; x += 12) {
-    line(x, yGround, x + 6, yGround);
-  }
-
-  noStroke();
-  fill(0);
-  text("Έδαφος", marginLeft + 10, yGround - 5);
-}
-function drawExtremes() {
-
-  let marginLeft = getMargin();
-
-  let yMin = yQ - rMin * scale;
-  let yMax = yQ - rMaxVal * scale;
-
-  drawingContext.setLineDash([3, 6]);
-
-  // ✅ r_min (π.χ. καφέ ή μπλε)
-  stroke('blue');
-  line(marginLeft, yMin, width, yMin);
-
-  // ✅ r_max (π.χ. μωβ ή κόκκινο)
-  stroke('purple');
-  line(marginLeft, yMax, width, yMax);
-
-  drawingContext.setLineDash([]);
-
-  // labels
-  noStroke();
-  fill(60);
-  textSize(13);
-
-  text("r_min", marginLeft + 5, yMin - 5);
-  text("r_max", marginLeft + 5, yMax - 5);
-}
-function drawForces() {
-
-  let r = (yQ - y) / scale;
-
-  let Fc = k * Q * q / (r * r);
-  let Fg = m * g;
-
-  let scaleF = 25;
-
-  strokeWeight(4);
-
-  // Coulomb
-  stroke('green');
-  line(width / 2, y, width / 2, y - Fc * scaleF);
-  arrow(width / 2, y - Fc * scaleF, -1, 'green');
-
-  // Βάρος
-  stroke('orange');
-  line(width / 2, y, width / 2, y + Fg * scaleF);
-  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
-}
-
-function arrow(x, y, dir, col) {
-  fill(col);
-  noStroke();
-  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
-}
-
