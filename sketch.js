@@ -24,17 +24,21 @@ function getMargin() {
   return max(180, width * 0.2);
 }
 
+// ✅ ✅ ΝΕΟ: mapping r -> y με clamp
+function rToY(r) {
+  let yVal = yQ - r * scale;
+  return constrain(yVal, 20, height - 20);
+}
+
 // ===== SETUP =====
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
-  // ✅ ΖΩΝΤΑΝΑ labels
   document.getElementById("Qslider").addEventListener("input", updateLabels);
   document.getElementById("qslider").addEventListener("input", updateLabels);
   document.getElementById("mslider").addEventListener("input", updateLabels);
 
-  // ✅ εφαρμογή φυσικής μόνο όταν αφήνεις
   document.getElementById("Qslider").addEventListener("change", applySliders);
   document.getElementById("qslider").addEventListener("change", applySliders);
   document.getElementById("mslider").addEventListener("change", applySliders);
@@ -90,8 +94,8 @@ function initSystem() {
 
   adjustScale();
 
-  y = yQ - d * scale;
-  yEq = yQ - rEq * scale;
+  y = rToY(d);
+  yEq = rToY(rEq);
 
   v = 0;
   prevV = 0;
@@ -107,8 +111,7 @@ function initSystem() {
 function enforceLimits() {
   if (rMin < 0.05) rMin = 0.05;
 
-  let maxR = height / scale;
-  if (rMaxVal > maxR) rMaxVal = maxR;
+  // ✅ κρατάμε τα φυσικά άκρα — ΔΕΝ τα πειράζουμε εδώ
 }
 
 // ===== DRAW =====
@@ -150,13 +153,13 @@ function updatePhysics() {
   if (r < rMin) {
     r = rMin;
     v *= -1;
-    y = yQ - r * scale;
+    y = rToY(r);
   }
 
   if (r > rMaxVal) {
     r = rMaxVal;
     v *= -1;
-    y = yQ - r * scale;
+    y = rToY(r);
   }
 
   if (!continuousMode) {
@@ -229,8 +232,8 @@ function drawExtremes() {
 
   let marginLeft = getMargin();
 
-  let yMin = yQ - rMin * scale;
-  let yMax = yQ - rMaxVal * scale;
+  let yMin = rToY(rMin);
+  let yMax = rToY(rMaxVal);
 
   drawingContext.setLineDash([3, 6]);
 
@@ -266,7 +269,6 @@ function drawInfo() {
     fill('red');
     text("⚠ Μεγάλο εύρος ταλάντωσης", 20, y0);
     text("δεν επιτρέπεται κίνηση", 20, y0 + 20);
-
     yData = y0 + 60;
   }
 
@@ -306,11 +308,11 @@ function resetSim() {
 }
 
 // ===== SCALE =====
-
 function adjustScale() {
   scale = height * 0.5;
 }
 
+// ===== GROUND =====
 function drawGround() {
 
   let yGround = height - 40;
@@ -330,4 +332,3 @@ function drawGround() {
   fill(0);
   text("Έδαφος", marginLeft + 10, yGround - 5);
 }
-
