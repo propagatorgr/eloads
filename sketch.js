@@ -314,7 +314,7 @@ function startSim() {
 
 
 function resumeSim() {
-
+targetExtreme = null;  
   continuousMode = false;
 
   let r = (yQ - y) / scale;
