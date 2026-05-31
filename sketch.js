@@ -213,14 +213,21 @@ function arrow(x, y, d, c) {
 
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
+
   let mL = getMargin();
 
-  drawingContext.setLineDash([6,6]);
+  stroke(0);
+  strokeWeight(1);
+
+  drawingContext.setLineDash([6, 6]);
   line(mL, yEq, width, yEq);
   drawingContext.setLineDash([]);
 
-  text("Θέση ισορροπίας", mL+5, yEq-5);
+  noStroke();
+  fill(0);
+  text("Θέση ισορροπίας", mL + 5, yEq - 5);
 }
+
 
 // ===== EXTREMES =====
 function drawExtremes() {
@@ -294,11 +301,24 @@ function adjustScale() {
 
 // ===== GROUND =====
 function drawGround() {
+
   let gY = height - 40;
   let mL = getMargin();
 
+  stroke(100);
+  strokeWeight(4);
   line(mL, gY, width, gY);
-  text("Έδαφος", mL+10, gY-5);
+
+  // ✅ striped ground (λείπει τώρα)
+  stroke(140);
+  strokeWeight(2);
+  for (let x = mL; x < width; x += 12) {
+    line(x, gY, x + 6, gY);
+  }
+
+  noStroke();
+  fill(0);
+  text("Έδαφος", mL + 10, gY - 5);
 }
 
 // ===== COMPUTE =====
