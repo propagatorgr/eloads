@@ -306,13 +306,11 @@ function resetSim() {
 }
 
 // ===== SCALE =====
+
 function adjustScale() {
-
-  let range = rMaxVal;
-  if (range < 0.1) range = 0.1;
-
-  scale = (0.6 * height) / range;
+  scale = height * 0.5;
 }
+
 function drawGround() {
 
   let yGround = height - 40;
