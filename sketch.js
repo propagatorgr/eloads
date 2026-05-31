@@ -114,7 +114,10 @@ function initSystem() {
 
 // ===== LIMITS =====
 function enforceLimits() {
-  if (rMin < 0.05) rMin = 0.05;
+  let maxR = height / scale;
+  if (rMaxVal > maxR) {
+    rMaxVal = maxR;
+  }
 }
 
 // ===== DRAW =====
