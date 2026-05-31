@@ -49,9 +49,11 @@ function updateLabels() {
   q = document.getElementById("qslider").value * 1e-6;
   m = parseFloat(document.getElementById("mslider").value);
 
-  document.getElementById("Qval").innerText = Q * 1e6;
-  document.getElementById("qval").innerText = q * 1e6;
-  document.getElementById("mval").innerText = m;
+ 
+document.getElementById("Qval").innerText = nf(Q * 1e6, 1, 0);
+  document.getElementById("qval").innerText = nf(q * 1e6, 1, 0);
+  document.getElementById("mval").innerText = nf(m, 1, 2);
+
 
   computeExtremesOnly();
 }
