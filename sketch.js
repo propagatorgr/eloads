@@ -24,12 +24,6 @@ function getMargin() {
   return max(180, width * 0.2);
 }
 
-// ✅ ✅ ΝΕΟ: mapping r -> y με clamp
-function rToY(r) {
-  let yVal = yQ - r * scale;
-  return constrain(yVal, 20, height - 20);
-}
-
 // ===== SETUP =====
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
@@ -94,8 +88,8 @@ function initSystem() {
 
   adjustScale();
 
-  y = rToY(d);
-  yEq = rToY(rEq);
+  y = yQ - d * scale;
+  yEq = yQ - rEq * scale;
 
   v = 0;
   prevV = 0;
@@ -110,8 +104,6 @@ function initSystem() {
 // ===== LIMITS =====
 function enforceLimits() {
   if (rMin < 0.05) rMin = 0.05;
-
-  // ✅ κρατάμε τα φυσικά άκρα — ΔΕΝ τα πειράζουμε εδώ
 }
 
 // ===== DRAW =====
@@ -153,13 +145,13 @@ function updatePhysics() {
   if (r < rMin) {
     r = rMin;
     v *= -1;
-    y = rToY(r);
+    y = yQ - r * scale;
   }
 
   if (r > rMaxVal) {
     r = rMaxVal;
     v *= -1;
-    y = rToY(r);
+    y = yQ - r * scale;
   }
 
   if (!continuousMode) {
@@ -177,7 +169,8 @@ function drawCharges() {
   ellipse(width / 2, yQ, 20);
 
   fill('blue');
-  ellipse(width / 2, y, 20);
+  let yDraw = constrain(y, 20, height - 20);  // ✅ visual clamp μόνο εδώ
+  ellipse(width / 2, yDraw, 20);
 
   if (document.getElementById("forcesCheckbox").checked) {
     drawForces();
@@ -217,14 +210,16 @@ function drawEquilibriumLine() {
 
   let marginLeft = getMargin();
 
+  let ySafe = constrain(yEq, 20, height - 20);
+
   stroke(0);
   drawingContext.setLineDash([6, 6]);
-  line(marginLeft, yEq, width, yEq);
+  line(marginLeft, ySafe, width, ySafe);
   drawingContext.setLineDash([]);
 
   noStroke();
   fill(0);
-  text("Θέση ισορροπίας", marginLeft + 5, yEq - 5);
+  text("Θέση ισορροπίας", marginLeft + 5, ySafe - 5);
 }
 
 // ===== EXTREMES =====
@@ -232,8 +227,8 @@ function drawExtremes() {
 
   let marginLeft = getMargin();
 
-  let yMin = rToY(rMin);
-  let yMax = rToY(rMaxVal);
+  let yMin = constrain(yQ - rMin * scale, 20, height - 20);
+  let yMax = constrain(yQ - rMaxVal * scale, 20, height - 20);
 
   drawingContext.setLineDash([3, 6]);
 
