@@ -76,7 +76,7 @@ function windowResized() {
 // ===== DRAW =====
 function draw() {
    background(230);
-
+drawGround();  
   drawEquilibriumLine();
 
   if (running) updatePhysics();
