@@ -208,38 +208,39 @@ function resetSim() {
   adjustScale();
   initSystem();
 }
-
+function updateFromSliders ( ){
 // ===== SLIDERS =====
-function updateFromSliders() {
+let r0 = 0.3;
+let rEqTemp = Math.sqrt((k * Q * q) / (m * g));
 
-  Q = document.getElementById("Qslider").value * 1e-6;
-  q = document.getElementById("qslider").value * 1e-6;
-  m = parseFloat(document.getElementById("mslider").value);
+// ✅ Κάτω όριο (υπάρχει ήδη)
+if (rEqTemp <= 1.2 * r0) {
 
-  let r0 = 0.3;
-  let rEqTemp = Math.sqrt((k * Q * q) / (m * g));
+  q = (m * g * r0 * r0) / (k * Q);
+  q = q * 1.3;
 
-  if (rEqTemp <= r0) {
-    q = (m * g * r0 * r0) / (k * Q);
-    q = q * 1.2;
-
-    document.getElementById("qslider").value = q * 1e6;
-    document.getElementById("qval").innerText = (q * 1e6).toFixed(1);
-  }
-
-  document.getElementById("Qval").innerText =
-    document.getElementById("Qslider").value;
-
-  document.getElementById("qval").innerText =
-    document.getElementById("qslider").value;
-
-  document.getElementById("mval").innerText =
-    document.getElementById("mslider").value;
-
-  adjustScale();
-  initSystem();
+  document.getElementById("qslider").value = q * 1e6;
 }
 
+// ✅ ΠΑΝΩ ΟΡΙΟ (ΝΕΟ 🔥)
+if (rEqTemp > 3 * r0) {
+
+  q = (m * g * (3 * r0) * (3 * r0)) / (k * Q);
+
+  document.getElementById("qslider").value = q * 1e6;
+}
+
+// update labels
+document.getElementById("Qval").innerText =
+  document.getElementById("Qslider").value;
+
+document.getElementById("qval").innerText =
+  document.getElementById("qslider").value;
+
+document.getElementById("mval").innerText =
+  document.getElementById("mslider").value;
+
+}
 // ===== SCALE =====
 function adjustScale() {
 
