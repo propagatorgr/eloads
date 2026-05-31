@@ -153,17 +153,16 @@ function updatePhysics() {
 
   let rSafeMin = max(rMin, R_phys);
 
-  if (r < rSafeMin) {
-    r = rSafeMin;
-    v *= -1;
-    y = yQ - r * scale;
-  }
-
-  if (r > rMaxVal) {
-    r = rMaxVal;
-    v *= -1;
-    y = yQ - r * scale;
-  }
+ if (r < rSafeMin) {
+  r = rSafeMin;
+  v = 0;   // ✅ εδώ είναι το fix
+  y = yQ - r * scale;
+}
+ if (r > rMaxVal) {
+  r = rMaxVal;
+  v = 0;   // ✅
+  y = yQ - r * scale;
+}
   if (!continuousMode) {
   if (r <= max(rMin, R_phys) || r >= rMaxVal) {
     running = false;
