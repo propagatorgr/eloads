@@ -182,7 +182,7 @@ if (!continuousMode && targetExtreme !== null) {
     v = 0;
   }
 }
-}
+
 
 // ===== OBJECTS =====
 function drawCharges() {
