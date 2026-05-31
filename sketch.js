@@ -1,13 +1,10 @@
-let Q = 2e-6;
-let q = 20e-6;
-let m = 0.1;
+let Q, q, m, d;
 
 let R_visual = 20;
 let R_phys;
 
 let g = 10;
 let k = 9e9;
-let d = 0.3;
 
 let rMin, rEqVal, rMaxVal;
 
@@ -18,7 +15,6 @@ let running = false;
 
 let scale = 250;
 let yEq;
-let vMaxTheory;
 
 // ===== margin =====
 function getMargin() {
@@ -30,39 +26,56 @@ function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
-  Qslider.addEventListener("input", updateLabels);
-  qslider.addEventListener("input", updateLabels);
-  mslider.addEventListener("input", updateLabels);
-
-  Qslider.addEventListener("change", applySliders);
-  qslider.addEventListener("change", applySliders);
-  mslider.addEventListener("change", applySliders);
-
-  initSystem();
+  applyScenario();   // ✅ αρχική κατάσταση
 }
 
-// ===== SLIDERS =====
-function updateLabels() {
-  Q = Qslider.value * 1e-6;
-  q = qslider.value * 1e-6;
-  m = parseFloat(mslider.value);
+// ===== SCENARIO =====
+function applyScenario() {
 
-  Qval.innerText = nf(Q * 1e6, 1, 0);
-  qval.innerText = nf(q * 1e6, 1, 0);
-  mval.innerText = nf(m, 1, 2);
+  let mode = document.getElementById("scenarioSelect").value;
 
-  computeExtremesOnly();
-}
+  if (mode === "base") {
+    Q = 2e-6;
+    q = 20e-6;
+    m = 0.1;
+    d = 0.3;
+  }
 
-function applySliders() {
-  Q = Qslider.value * 1e-6;
-  q = qslider.value * 1e-6;
-  m = parseFloat(mslider.value);
+  if (mode === "equilibrium") {
+    Q = 2e-6;
+    q = 20e-6;
+    m = 0.1;
+    d = sqrt((k * Q * q) / (m * g));
+  }
+
+  if (mode === "small") {
+    Q = 2e-6;
+    q = 20e-6;
+    m = 0.1;
+    let req = sqrt((k * Q * q) / (m * g));
+    d = 1.05 * req;
+  }
+
+  if (mode === "large") {
+    Q = 7e-6;
+    q = 50e-6;
+    m = 0.1;
+    d = 0.3;
+  }
+
+  // ✅ ενημέρωση display
+  document.getElementById("values").innerText =
+    "Q=" + (Q*1e6).toFixed(0) + " μC | " +
+    "q=" + (q*1e6).toFixed(0) + " μC | " +
+    "m=" + m.toFixed(2) + " kg | " +
+    "d=" + d.toFixed(2) + " m";
+
   initSystem();
 }
 
 // ===== INIT =====
 function initSystem() {
+
   let yGround = height - 40;
   yQ = yGround - 10;
 
@@ -71,7 +84,6 @@ function initSystem() {
 
   let A = m * g;
   let B = k * Q * q;
-
   let E0 = A * d + B / d;
   let D = E0 * E0 - 4 * A * B;
 
@@ -96,22 +108,23 @@ function initSystem() {
   v = 0;
   running = false;
 
-  let Ueq = m * g * rEq + k * Q * q / rEq;
-  vMaxTheory = sqrt((2 / m) * (E0 - Ueq));
-
   enforceLimits();
 }
 
 // ===== LIMITS =====
 function enforceLimits() {
+
   let maxR = 0.7 * height / scale;
 
   if (rMaxVal > maxR) {
     rMaxVal = maxR;
   }
 
-  y = constrain(y, yQ - rMaxVal * scale,
-                    yQ - max(rMin, R_phys) * scale);
+  y = constrain(
+    y,
+    yQ - rMaxVal * scale,
+    yQ - max(rMin, R_phys) * scale
+  );
 }
 
 // ===== DRAW =====
@@ -166,7 +179,7 @@ function updatePhysics() {
     hitMax = true;
   }
 
-  // ✅ ΤΕΛΙΚΟ STEP FIX
+  // ✅ ΣΤΑΘΕΡΟ STEP (χωρίς bug)
   if (!continuousMode && (hitMin || hitMax)) {
     running = false;
   }
@@ -174,6 +187,7 @@ function updatePhysics() {
 
 // ===== OBJECTS =====
 function drawCharges() {
+
   fill('red');
   noStroke();
   ellipse(width / 2, yQ, R_visual);
@@ -181,13 +195,14 @@ function drawCharges() {
   fill('blue');
   ellipse(width / 2, y, R_visual);
 
-  if (forcesCheckbox.checked) {
+  if (document.getElementById("forcesCheckbox").checked) {
     drawForces();
   }
 }
 
 // ===== FORCES =====
 function drawForces() {
+
   let r = (yQ - y) / scale;
 
   let Fc = k * Q * q / (r * r);
@@ -219,7 +234,7 @@ function drawEquilibriumLine() {
   stroke(0);
   strokeWeight(1);
 
-  drawingContext.setLineDash([6, 6]);
+  drawingContext.setLineDash([6,6]);
   line(mL, yEq, width, yEq);
   drawingContext.setLineDash([]);
 
@@ -228,34 +243,38 @@ function drawEquilibriumLine() {
   text("Θέση ισορροπίας", mL + 5, yEq - 5);
 }
 
-
 // ===== EXTREMES =====
 function drawExtremes() {
+
   let mL = getMargin();
 
   let yMin = yQ - rMin * scale;
   let yMax = yQ - rMaxVal * scale;
 
   drawingContext.setLineDash([3,6]);
+
   stroke('blue');
   line(mL, yMin, width, yMin);
+
   stroke('purple');
   line(mL, yMax, width, yMax);
+
   drawingContext.setLineDash([]);
 
   fill(60);
-  text("r_min", mL+5, yMin-5);
-  text("r_max", mL+5, yMax-5);
+  text("r_min", mL + 5, yMin - 5);
+  text("r_max", mL + 5, yMax - 5);
 }
 
 // ===== INFO =====
 function drawInfo() {
+
   textSize(16);
 
   fill(continuousMode ? 'green' : 'blue');
   text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
-  let y0 = height - 140;
+  let y0 = height - 120;
 
   fill(0);
   text("d = " + nf(d,1,2), 20, y0);
@@ -277,21 +296,8 @@ function resumeSim() {
 }
 
 function resetSim() {
-  Qslider.value = 2;
-  qslider.value = 20;
-  mslider.value = 0.1;
-
-  updateLabels();
-
-  Q = 2e-6;
-  q = 20e-6;
-  m = 0.1;
-
-  v = 0;
-  running = false;
-  continuousMode = false;
-
-  initSystem();
+  document.getElementById("scenarioSelect").value = "base";
+  applyScenario();
 }
 
 // ===== SCALE =====
@@ -309,7 +315,6 @@ function drawGround() {
   strokeWeight(4);
   line(mL, gY, width, gY);
 
-  // ✅ striped ground (λείπει τώρα)
   stroke(140);
   strokeWeight(2);
   for (let x = mL; x < width; x += 12) {
@@ -321,25 +326,3 @@ function drawGround() {
   text("Έδαφος", mL + 10, gY - 5);
 }
 
-// ===== COMPUTE =====
-function computeExtremesOnly() {
-  let rEq = sqrt((k * Q * q) / (m * g));
-  rEqVal = rEq;
-
-  let A = m * g;
-  let B = k * Q * q;
-
-  let E0 = A * d + B / d;
-  let D = E0 * E0 - 4 * A * B;
-
-  let r1 = (E0 + sqrt(D)) / (2 * A);
-  let r2 = (E0 - sqrt(D)) / (2 * A);
-
-  if (d > rEq) {
-    rMaxVal = d;
-    rMin = min(r1, r2);
-  } else {
-    rMin = d;
-    rMaxVal = max(r1, r2);
-  }
-}
