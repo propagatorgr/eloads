@@ -112,6 +112,12 @@ function draw() {
 
 // ===== PHYSICS =====
 function updatePhysics() {
+  
+// ❗ STOP αν υπάρχει warning
+  if (rMaxVal > 5) {
+    running = false;
+    return;
+  }
 
   let r = (yQ - y) / scale;
 
@@ -186,7 +192,7 @@ function drawInfo() {
 
   if (rMaxVal > 5) {
     fill('red');
-    text("⚠ Μεγάλο εύρος ταλάντωσης", 20, height - 115);
+    text("⚠ Μεγάλο εύρος ταλάντωσης - δεν επιτρέπεται κίνηση", 20, height - 115);
   }
 
   fill(0);
@@ -195,6 +201,8 @@ function drawInfo() {
   text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, height - 60);
   text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, height - 40);
   text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, height - 20);
+  
+
 }
 
 // ===== BUTTONS =====
