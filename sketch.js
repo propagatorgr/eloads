@@ -29,10 +29,12 @@ function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
+  // ✅ input → μόνο labels (ΔΕΝ καλεί φυσική)
   document.getElementById("Qslider").addEventListener("input", updateLabels);
   document.getElementById("qslider").addEventListener("input", updateLabels);
   document.getElementById("mslider").addEventListener("input", updateLabels);
 
+  // ✅ change → εφαρμόζει φυσική ΜΟΝΟ όταν αφήνεις
   document.getElementById("Qslider").addEventListener("change", applySliders);
   document.getElementById("qslider").addEventListener("change", applySliders);
   document.getElementById("mslider").addEventListener("change", applySliders);
@@ -88,6 +90,7 @@ function initSystem() {
 
   adjustScale();
 
+  // ✅ ΑΥΤΟ ΔΕΝ ΤΟ ΠΕΙΡΑΖΟΥΜΕ (είναι σωστή φυσική)
   y = yQ - d * scale;
   yEq = yQ - rEq * scale;
 
@@ -142,6 +145,7 @@ function updatePhysics() {
 
   r = (yQ - y) / scale;
 
+  // ✅ clamp φυσικής (ТΟ ΣΩΣΤΟ ΠΟΥ ΕΙΧΕΣ)
   if (r < rMin) {
     r = rMin;
     v *= -1;
@@ -169,8 +173,7 @@ function drawCharges() {
   ellipse(width / 2, yQ, 20);
 
   fill('blue');
-  let yDraw = constrain(y, 20, height - 20);  // ✅ visual clamp μόνο εδώ
-  ellipse(width / 2, yDraw, 20);
+  ellipse(width / 2, y, 20);
 
   if (document.getElementById("forcesCheckbox").checked) {
     drawForces();
@@ -210,16 +213,14 @@ function drawEquilibriumLine() {
 
   let marginLeft = getMargin();
 
-  let ySafe = constrain(yEq, 20, height - 20);
-
   stroke(0);
   drawingContext.setLineDash([6, 6]);
-  line(marginLeft, ySafe, width, ySafe);
+  line(marginLeft, yEq, width, yEq);
   drawingContext.setLineDash([]);
 
   noStroke();
   fill(0);
-  text("Θέση ισορροπίας", marginLeft + 5, ySafe - 5);
+  text("Θέση ισορροπίας", marginLeft + 5, yEq - 5);
 }
 
 // ===== EXTREMES =====
@@ -227,8 +228,8 @@ function drawExtremes() {
 
   let marginLeft = getMargin();
 
-  let yMin = constrain(yQ - rMin * scale, 20, height - 20);
-  let yMax = constrain(yQ - rMaxVal * scale, 20, height - 20);
+  let yMin = yQ - rMin * scale;
+  let yMax = yQ - rMaxVal * scale;
 
   drawingContext.setLineDash([3, 6]);
 
@@ -304,7 +305,9 @@ function resetSim() {
 
 // ===== SCALE =====
 function adjustScale() {
-  scale = height * 0.5;
+  let range = rMaxVal;
+  if (range < 0.1) range = 0.1;
+  scale = (0.6 * height) / range;
 }
 
 // ===== GROUND =====
