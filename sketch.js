@@ -2,6 +2,9 @@ let Q = 2e-6;
 let q = 20e-6;
 let m = 0.1;
 
+let R_visual = 20;        // μέγεθος κύκλου σε pixels (αυτό που έχεις στο ellipse)
+let R_phys;       
+
 let g = 10;
 let k = 9e9;
 
@@ -97,7 +100,7 @@ function initSystem() {
   }
 
   adjustScale();
-
+R_phys = R_visual / scale;
   // ✅ ΑΥΤΟ ΔΕΝ ΤΟ ΠΕΙΡΑΖΟΥΜΕ (είναι σωστή φυσική)
   y = yQ - d * scale;
   yEq = yQ - rEq * scale;
@@ -137,14 +140,22 @@ function draw() {
 // ===== PHYSICS =====
 function updatePhysics() {
 
+if (rMin < R_phys) {
+  running = false;
+  return;
+}
+
   if (rMaxVal > 5) {
     running = false;
     return;
   }
 // ✅ νέο warning για μικρό r_min
-if (rMin < 0.05) {
-  running = false;
-  return;
+let rSafeMin = max(rMin, R_phys);
+
+if (r < rSafeMin) {
+  r = rSafeMin;
+  v *= -1;
+  y = yQ - r * scale;
 }
 
   let r = (yQ - y) / scale;
