@@ -56,12 +56,13 @@ function applyScenario() {
     d = 1.05 * req;
   }
 
-  if (mode === "large") {
-    Q = 7e-6;
-    q = 50e-6;
-    m = 0.1;
-    d = 0.3;
-  }
+ if (mode === "large") {
+  Q = 4e-6;
+  q = 30e-6;
+  m = 0.1;
+  d = 0.6;
+}
+
 
   // ✅ ενημέρωση display
   document.getElementById("values").innerText =
