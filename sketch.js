@@ -155,7 +155,7 @@ function updatePhysics() {
   let F = Fc - m * g;
 
   let dt = 0.01;
-
+let prevV = v;
   v += (F / m) * dt;
   y -= v * dt * scale;
 
@@ -181,9 +181,12 @@ function updatePhysics() {
   }
 
   // ✅ ΣΤΑΘΕΡΟ STEP (χωρίς bug)
-  if (!continuousMode && (hitMin || hitMax)) {
-    running = false;
-  }
+
+if (!continuousMode && prevV * v < 0) {
+  running = false;
+  v = 0;
+}
+
 }
 
 // ===== OBJECTS =====
