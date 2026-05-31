@@ -1,4 +1,5 @@
 let Q, q, m, d;
+let stepTarget = null;
 
 let R_visual = 20;
 let R_phys;
@@ -181,9 +182,10 @@ function updatePhysics() {
   }
 
   // ✅ ΣΩΣΤΟ STEP (δουλεύει με clamp)
-  if (!continuousMode && prevV !== 0 && v === 0) {
-    running = false;
-  }
+if (!continuousMode) {
+  if (stepTarget === "max" && hitMax) running = false;
+  if (stepTarget === "min" && hitMin) running = false;
+}
 }
 
 // ===== OBJECTS =====
@@ -293,6 +295,10 @@ function startSim() {
 
 function resumeSim() {
   continuousMode = false;
+
+  let r = (yQ - y) / scale;
+  stepTarget = (r < rEqVal) ? "max" : "min";
+
   running = true;
 }
 
