@@ -138,6 +138,11 @@ function updatePhysics() {
     running = false;
     return;
   }
+// ✅ νέο warning για μικρό r_min
+if (rMin < 0.05) {
+  running = false;
+  return;
+}
 
   let r = (yQ - y) / scale;
 
@@ -275,6 +280,12 @@ function drawInfo() {
     text("δεν επιτρέπεται κίνηση", 20, y0 + 20);
     yData = y0 + 60;
   }
+
+if (rMin < 0.05) {
+  fill('red');
+  text("⚠ Πολύ μικρή απόσταση", 20, y0);
+  text("μη αποδεκτό μοντέλο", 20, y0 + 20);
+}
 
   fill(0);
   text("d = " + nf(d, 1, 2) + " m", 20, yData);
