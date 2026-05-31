@@ -117,6 +117,7 @@ R_phys = R_visual / scale;
 
 // ===== LIMITS =====
 function enforceLimits() {
+   let maxR = 0.7 * height / scale;
   let maxR = height / scale;
   if (rMaxVal > maxR) {
     rMaxVal = maxR;
