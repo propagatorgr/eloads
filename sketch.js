@@ -258,29 +258,38 @@ function drawExtremes() {
 // ===== INFO =====
 function drawInfo() {
 
-textSize(16);
-fill(continuousMode ? 'green' : 'blue');
-
-text(
-  continuousMode ? "Mode: Continuous" : "Mode: Step",
-  20,
-  30
-);
-
   noStroke();
+  textSize(16);
+
+  // ✅ Mode ένδειξη
+  fill(continuousMode ? 'green' : 'blue');
+  text(
+    continuousMode ? "Mode: Continuous" : "Mode: Step",
+    20,
+    30
+  );
 
   let y0 = height - 140;
+  let yData = height - 100;
 
+  // ✅ collision warning
   if (rMin < R_phys) {
     fill('red');
     text("⚠ Σύγκρουση φορτίων", 20, y0);
+    yData = y0 + 40;
   }
 
   fill(0);
-  text("d = " + nf(d, 1, 2), 20, y0 + 20);
-  text("r_min = " + nf(rMin, 1, 2), 20, y0 + 40);
-  text("r_eq = " + nf(rEqVal, 1, 2), 20, y0 + 60);
-  text("r_max = " + nf(rMaxVal, 1, 2), 20, y0 + 80);
+
+  text("d = " + nf(d, 1, 2) + " m", 20, yData);
+  text("r_min = " + nf(rMin, 1, 2) + " m", 20, yData + 20);
+  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, yData + 40);
+  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, yData + 60);
+
+  // ✅ ΤΟ ΚΟΜΜΑΤΙ ΠΟΥ ΛΕΙΠΕ
+  text("v = " + nf(v, 1, 2) + " m/s", 20, yData + 80);
+
+  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, yData + 100);
 }
 
 // ===== BUTTONS =====
