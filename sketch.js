@@ -153,14 +153,21 @@ function arrow(x, y, dir, col) {
 
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
+
+  // ίδιο margin με το έδαφος ✅
+  let marginLeft = max(180, width * 0.2);
+
+  let xStart = marginLeft;
+  let xEnd = width;
+
   stroke(0);
   drawingContext.setLineDash([6, 6]);
-  line(0, yEq, width, yEq);
+  line(xStart, yEq, xEnd, yEq);
   drawingContext.setLineDash([]);
 
   noStroke();
   fill(0);
-  text("Θέση ισορροπίας", 10, yEq - 5);
+  text("Θέση ισορροπίας", xStart + 5, yEq - 5);
 }
 
 // ===== INFO =====
