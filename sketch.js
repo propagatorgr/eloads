@@ -25,8 +25,7 @@ function getMargin() {
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
-
-  applyScenario();   // ✅ αρχική κατάσταση
+  applyScenario();
 }
 
 // ===== SCENARIO =====
@@ -56,15 +55,13 @@ function applyScenario() {
     d = 1.05 * req;
   }
 
- if (mode === "large") {
-  Q = 4e-6;
-  q = 30e-6;
-  m = 0.1;
-  d = 0.6;
-}
+  if (mode === "large") {
+    Q = 4e-6;
+    q = 30e-6;
+    m = 0.1;
+    d = 0.6;
+  }
 
-
-  // ✅ ενημέρωση display
   document.getElementById("values").innerText =
     "Q=" + (Q*1e6).toFixed(0) + " μC | " +
     "q=" + (q*1e6).toFixed(0) + " μC | " +
@@ -85,6 +82,7 @@ function initSystem() {
 
   let A = m * g;
   let B = k * Q * q;
+
   let E0 = A * d + B / d;
   let D = E0 * E0 - 4 * A * B;
 
@@ -155,7 +153,9 @@ function updatePhysics() {
   let F = Fc - m * g;
 
   let dt = 0.01;
-let prevV = v;
+
+  let prevV = v;   // ✅ ΚΡΙΣΙΜΟ
+
   v += (F / m) * dt;
   y -= v * dt * scale;
 
@@ -180,13 +180,10 @@ let prevV = v;
     hitMax = true;
   }
 
-  // ✅ ΣΤΑΘΕΡΟ STEP (χωρίς bug)
-
-if (!continuousMode && prevV * v < 0) {
-  running = false;
-  v = 0;
-}
-
+  // ✅ ΣΩΣΤΟ STEP (δουλεύει με clamp)
+  if (!continuousMode && prevV !== 0 && v === 0) {
+    running = false;
+  }
 }
 
 // ===== OBJECTS =====
@@ -329,4 +326,3 @@ function drawGround() {
   fill(0);
   text("Έδαφος", mL + 10, gY - 5);
 }
-
