@@ -1,13 +1,12 @@
 let Q = 2e-6;
 let q = 20e-6;
 let m = 0.1;
-let targetExtreme = null;
+
 let R_visual = 20;
 let R_phys;
 
 let g = 10;
 let k = 9e9;
-
 let d = 0.3;
 
 let rMin, rEqVal, rMaxVal;
@@ -15,7 +14,6 @@ let rMin, rEqVal, rMaxVal;
 let continuousMode = false;
 
 let yQ, y, v = 0;
-let prevV = 0;
 let running = false;
 
 let scale = 250;
@@ -32,43 +30,39 @@ function setup() {
   let canvas = createCanvas(windowWidth, windowHeight - 80);
   canvas.parent("canvasContainer");
 
-  document.getElementById("Qslider").addEventListener("input", updateLabels);
-  document.getElementById("qslider").addEventListener("input", updateLabels);
-  document.getElementById("mslider").addEventListener("input", updateLabels);
+  Qslider.addEventListener("input", updateLabels);
+  qslider.addEventListener("input", updateLabels);
+  mslider.addEventListener("input", updateLabels);
 
-  document.getElementById("Qslider").addEventListener("change", applySliders);
-  document.getElementById("qslider").addEventListener("change", applySliders);
-  document.getElementById("mslider").addEventListener("change", applySliders);
+  Qslider.addEventListener("change", applySliders);
+  qslider.addEventListener("change", applySliders);
+  mslider.addEventListener("change", applySliders);
 
   initSystem();
 }
 
 // ===== SLIDERS =====
 function updateLabels() {
-  Q = document.getElementById("Qslider").value * 1e-6;
-  q = document.getElementById("qslider").value * 1e-6;
-  m = parseFloat(document.getElementById("mslider").value);
+  Q = Qslider.value * 1e-6;
+  q = qslider.value * 1e-6;
+  m = parseFloat(mslider.value);
 
- 
-document.getElementById("Qval").innerText = nf(Q * 1e6, 1, 0);
-  document.getElementById("qval").innerText = nf(q * 1e6, 1, 0);
-  document.getElementById("mval").innerText = nf(m, 1, 2);
-
+  Qval.innerText = nf(Q * 1e6, 1, 0);
+  qval.innerText = nf(q * 1e6, 1, 0);
+  mval.innerText = nf(m, 1, 2);
 
   computeExtremesOnly();
 }
 
 function applySliders() {
-  Q = document.getElementById("Qslider").value * 1e-6;
-  q = document.getElementById("qslider").value * 1e-6;
-  m = parseFloat(document.getElementById("mslider").value);
-
+  Q = Qslider.value * 1e-6;
+  q = qslider.value * 1e-6;
+  m = parseFloat(mslider.value);
   initSystem();
 }
 
 // ===== INIT =====
 function initSystem() {
-
   let yGround = height - 40;
   yQ = yGround - 10;
 
@@ -110,14 +104,14 @@ function initSystem() {
 
 // ===== LIMITS =====
 function enforceLimits() {
-
   let maxR = 0.7 * height / scale;
 
   if (rMaxVal > maxR) {
     rMaxVal = maxR;
   }
 
-  y = constrain(y, yQ - rMaxVal * scale, yQ - max(rMin, R_phys) * scale);
+  y = constrain(y, yQ - rMaxVal * scale,
+                    yQ - max(rMin, R_phys) * scale);
 }
 
 // ===== DRAW =====
@@ -155,38 +149,31 @@ function updatePhysics() {
 
   let rSafeMin = max(rMin, R_phys);
 
- if (r < rSafeMin) {
-  r = rSafeMin;
-  v = 0;   // ✅ εδώ είναι το fix
-  y = yQ - r * scale;
-}
- if (r > rMaxVal) {
-  r = rMaxVal;
-  v = 0;   // ✅
-  y = yQ - r * scale;
-}
-if (!continuousMode && targetExtreme !== null) {
+  let hitMin = false;
+  let hitMax = false;
 
-  let r = (yQ - y) / scale;
-
-  if (abs(r - targetExtreme) < 0.005) {
-    running = false;
+  if (r < rSafeMin) {
+    r = rSafeMin;
+    y = yQ - r * scale;
     v = 0;
-    targetExtreme = null;
+    hitMin = true;
+  }
+
+  if (r > rMaxVal) {
+    r = rMaxVal;
+    y = yQ - r * scale;
+    v = 0;
+    hitMax = true;
+  }
+
+  // ✅ ΤΕΛΙΚΟ STEP FIX
+  if (!continuousMode && (hitMin || hitMax)) {
+    running = false;
   }
 }
-
-  // αν πάς προς τα πάνω
-  if (v > 0 && r >= rMaxVal) {
-    running = false;
-    v = 0;
-  }
-}
-
 
 // ===== OBJECTS =====
 function drawCharges() {
-
   fill('red');
   noStroke();
   ellipse(width / 2, yQ, R_visual);
@@ -194,115 +181,81 @@ function drawCharges() {
   fill('blue');
   ellipse(width / 2, y, R_visual);
 
-  if (document.getElementById("forcesCheckbox").checked) {
+  if (forcesCheckbox.checked) {
     drawForces();
   }
 }
 
 // ===== FORCES =====
 function drawForces() {
-
   let r = (yQ - y) / scale;
 
   let Fc = k * Q * q / (r * r);
   let Fg = m * g;
 
-  let scaleF = 25;
+  let s = 25;
 
-  strokeWeight(4);
-
-  // Coulomb (προς τα πάνω)
   stroke('green');
-  line(width / 2, y, width / 2, y - Fc * scaleF);
-  arrow(width / 2, y - Fc * scaleF, -1, 'green');
+  line(width/2, y, width/2, y - Fc*s);
+  arrow(width/2, y - Fc*s, -1, 'green');
 
-  // Βάρος
   stroke('orange');
-  line(width / 2, y, width / 2, y + Fg * scaleF);
-  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
+  line(width/2, y, width/2, y + Fg*s);
+  arrow(width/2, y + Fg*s, 1, 'orange');
 }
 
 // ===== ARROW =====
-function arrow(x, y, dir, col) {
-  fill(col);
+function arrow(x, y, d, c) {
+  fill(c);
   noStroke();
-  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
+  triangle(x-6, y, x+6, y, x, y + d*10);
 }
 
 // ===== EQUILIBRIUM =====
 function drawEquilibriumLine() {
-  let marginLeft = getMargin();
+  let mL = getMargin();
 
-  stroke(0);
-  drawingContext.setLineDash([6, 6]);
-  line(marginLeft, yEq, width, yEq);
+  drawingContext.setLineDash([6,6]);
+  line(mL, yEq, width, yEq);
   drawingContext.setLineDash([]);
 
-  fill(0);
-  noStroke();
-  text("Θέση ισορροπίας", marginLeft + 5, yEq - 5);
+  text("Θέση ισορροπίας", mL+5, yEq-5);
 }
 
 // ===== EXTREMES =====
 function drawExtremes() {
-
-  let marginLeft = getMargin();
+  let mL = getMargin();
 
   let yMin = yQ - rMin * scale;
   let yMax = yQ - rMaxVal * scale;
 
-  drawingContext.setLineDash([3, 6]);
-
+  drawingContext.setLineDash([3,6]);
   stroke('blue');
-  line(marginLeft, yMin, width, yMin);
-
+  line(mL, yMin, width, yMin);
   stroke('purple');
-  line(marginLeft, yMax, width, yMax);
-
+  line(mL, yMax, width, yMax);
   drawingContext.setLineDash([]);
 
-  noStroke();
   fill(60);
-
-  text("r_min", marginLeft + 5, yMin - 5);
-  text("r_max", marginLeft + 5, yMax - 5);
+  text("r_min", mL+5, yMin-5);
+  text("r_max", mL+5, yMax-5);
 }
 
 // ===== INFO =====
 function drawInfo() {
-
-  noStroke();
   textSize(16);
 
-  // ✅ Mode ένδειξη
   fill(continuousMode ? 'green' : 'blue');
-  text(
-    continuousMode ? "Mode: Continuous" : "Mode: Step",
-    20,
-    30
-  );
+  text(continuousMode ? "Mode: Continuous" : "Mode: Step", 20, 30);
 
   let y0 = height - 140;
-  let yData = height - 100;
-
-  // ✅ collision warning
-  if (rMin < R_phys) {
-    fill('red');
-    text("⚠ Σύγκρουση φορτίων", 20, y0);
-    yData = y0 + 40;
-  }
 
   fill(0);
-
-  text("d = " + nf(d, 1, 2) + " m", 20, yData);
-  text("r_min = " + nf(rMin, 1, 2) + " m", 20, yData + 20);
-  text("r_eq  = " + nf(rEqVal, 1, 2) + " m", 20, yData + 40);
-  text("r_max = " + nf(rMaxVal, 1, 2) + " m", 20, yData + 60);
-
-  // ✅ ΤΟ ΚΟΜΜΑΤΙ ΠΟΥ ΛΕΙΠΕ
-  text("v = " + nf(v, 1, 2) + " m/s", 20, yData + 80);
-
-  text("v_max = " + nf(vMaxTheory, 1, 2) + " m/s", 20, yData + 100);
+  text("d = " + nf(d,1,2), 20, y0);
+  text("r_min = " + nf(rMin,1,2), 20, y0+20);
+  text("r_eq = " + nf(rEqVal,1,2), 20, y0+40);
+  text("r_max = " + nf(rMaxVal,1,2), 20, y0+60);
+  text("v = " + nf(v,1,2), 20, y0+80);
 }
 
 // ===== BUTTONS =====
@@ -311,60 +264,28 @@ function startSim() {
   running = true;
 }
 
-
-
 function resumeSim() {
-targetExtreme = null;  
   continuousMode = false;
-
-  let r = (yQ - y) / scale;
-
-  // ✅ αν είσαι κάτω → πήγαινε πάνω
-  if (abs(r - rMin) < 1e-4) {
-    targetExtreme = rMaxVal;
-  }
-  // ✅ αν είσαι πάνω → πήγαινε κάτω
-  else if (abs(r - rMaxVal) < 1e-4) {
-    targetExtreme = max(rMin, R_phys);
-  }
-  // ✅ ενδιάμεσα → διάλεξε πιο κοντινό
-  else if (r < rEqVal) {
-    targetExtreme = rMaxVal;
-  } else {
-    targetExtreme = max(rMin, R_phys);
-  }
-
   running = true;
 }
+
 function resetSim() {
+  Qslider.value = 2;
+  qslider.value = 20;
+  mslider.value = 0.1;
 
-  // ✅ επαναφορά sliders (UI)
-  document.getElementById("Qslider").value = 2;
-  document.getElementById("qslider").value = 20;
-  document.getElementById("mslider").value = 0.1;
+  updateLabels();
 
-  // ✅ ενημέρωση labels
-  document.getElementById("Qval").innerText = 2;
-  document.getElementById("qval").innerText = 20;
-  document.getElementById("mval").innerText = 0.1;
-
-  // ✅ επαναφορά φυσικών μεγεθών
   Q = 2e-6;
   q = 20e-6;
   m = 0.1;
-  d = 0.3;
 
-  // ✅ reset ταχύτητας
   v = 0;
-
-  // ✅ reset mode
   running = false;
   continuousMode = false;
 
-  // ✅ επανυπολογισμός συστήματος
   initSystem();
 }
-
 
 // ===== SCALE =====
 function adjustScale() {
@@ -373,20 +294,15 @@ function adjustScale() {
 
 // ===== GROUND =====
 function drawGround() {
-  let yGround = height - 40;
-  let marginLeft = getMargin();
+  let gY = height - 40;
+  let mL = getMargin();
 
-  stroke(100);
-  line(marginLeft, yGround, width, yGround);
-
-  fill(0);
-  noStroke();
-  text("Έδαφος", marginLeft + 10, yGround - 5);
+  line(mL, gY, width, gY);
+  text("Έδαφος", mL+10, gY-5);
 }
 
 // ===== COMPUTE =====
 function computeExtremesOnly() {
-
   let rEq = sqrt((k * Q * q) / (m * g));
   rEqVal = rEq;
 
@@ -407,4 +323,3 @@ function computeExtremesOnly() {
     rMaxVal = max(r1, r2);
   }
 }
-
