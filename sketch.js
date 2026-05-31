@@ -49,14 +49,9 @@ function updateLabels() {
   q = document.getElementById("qslider").value * 1e-6;
   m = parseFloat(document.getElementById("mslider").value);
 
-  document.getElementById("Qval").innerText =
-    document.getElementById("Qslider").value;
-
-  document.getElementById("qval").innerText =
-    document.getElementById("qslider").value;
-
-  document.getElementById("mval").innerText =
-    document.getElementById("mslider").value;
+  document.getElementById("Qval").innerText = Q * 1e6;
+  document.getElementById("qval").innerText = q * 1e6;
+  document.getElementById("mval").innerText = m;
 
   computeExtremesOnly();
 }
@@ -120,7 +115,6 @@ function enforceLimits() {
     rMaxVal = maxR;
   }
 
-  // κρατάει το y μέσα
   y = constrain(y, yQ - rMaxVal * scale, yQ - max(rMin, R_phys) * scale);
 }
 
@@ -141,11 +135,6 @@ function draw() {
 function updatePhysics() {
 
   if (rMin < R_phys) {
-    running = false;
-    return;
-  }
-
-  if (rMaxVal > 5) {
     running = false;
     return;
   }
@@ -175,12 +164,6 @@ function updatePhysics() {
     v *= -1;
     y = yQ - r * scale;
   }
-
-  if (!continuousMode) {
-    if (r <= rSafeMin || r >= rMaxVal) {
-      running = false;
-    }
-  }
 }
 
 // ===== OBJECTS =====
@@ -192,6 +175,40 @@ function drawCharges() {
 
   fill('blue');
   ellipse(width / 2, y, R_visual);
+
+  if (document.getElementById("forcesCheckbox").checked) {
+    drawForces();
+  }
+}
+
+// ===== FORCES =====
+function drawForces() {
+
+  let r = (yQ - y) / scale;
+
+  let Fc = k * Q * q / (r * r);
+  let Fg = m * g;
+
+  let scaleF = 25;
+
+  strokeWeight(4);
+
+  // Coulomb (προς τα πάνω)
+  stroke('green');
+  line(width / 2, y, width / 2, y - Fc * scaleF);
+  arrow(width / 2, y - Fc * scaleF, -1, 'green');
+
+  // Βάρος
+  stroke('orange');
+  line(width / 2, y, width / 2, y + Fg * scaleF);
+  arrow(width / 2, y + Fg * scaleF, 1, 'orange');
+}
+
+// ===== ARROW =====
+function arrow(x, y, dir, col) {
+  fill(col);
+  noStroke();
+  triangle(x - 6, y, x + 6, y, x, y + dir * 10);
 }
 
 // ===== EQUILIBRIUM =====
@@ -255,7 +272,6 @@ function drawInfo() {
 // ===== BUTTONS =====
 function startSim() {
   running = true;
-  continuousMode = true;
 }
 
 function resumeSim() {
@@ -285,7 +301,7 @@ function drawGround() {
   text("Έδαφος", marginLeft + 10, yGround - 5);
 }
 
-// ===== COMPUTE ONLY =====
+// ===== COMPUTE =====
 function computeExtremesOnly() {
 
   let rEq = sqrt((k * Q * q) / (m * g));
