@@ -164,6 +164,11 @@ function updatePhysics() {
     v *= -1;
     y = yQ - r * scale;
   }
+  if (!continuousMode) {
+  if (r <= max(rMin, R_phys) || r >= rMaxVal) {
+    running = false;
+  }
+}
 }
 
 // ===== OBJECTS =====
@@ -253,6 +258,15 @@ function drawExtremes() {
 // ===== INFO =====
 function drawInfo() {
 
+textSize(16);
+fill(continuousMode ? 'green' : 'blue');
+
+text(
+  continuousMode ? "Mode: Continuous" : "Mode: Step",
+  20,
+  30
+);
+
   noStroke();
 
   let y0 = height - 140;
@@ -271,10 +285,14 @@ function drawInfo() {
 
 // ===== BUTTONS =====
 function startSim() {
+  continuousMode = true;
   running = true;
 }
 
+
+
 function resumeSim() {
+  continuousMode = false;
   running = true;
 }
 
@@ -324,4 +342,4 @@ function computeExtremesOnly() {
     rMaxVal = max(r1, r2);
   }
 }
-``
+
