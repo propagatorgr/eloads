@@ -59,6 +59,7 @@ function updateLabels() {
 
   document.getElementById("mval").innerText =
     document.getElementById("mslider").value;
+  computeExtremesOnly();
 }
 
 function applySliders() {
@@ -336,4 +337,29 @@ function drawGround() {
   noStroke();
   fill(0);
   text("Έδαφος", marginLeft + 10, yGround - 5);
+}
+function computeExtremesOnly() {
+
+  let rEq = sqrt((k * Q * q) / (m * g));
+  rEqVal = rEq;
+
+  let A = m * g;
+  let B = k * Q * q;
+
+  let E0 = A * d + B / d;
+  let D = E0 * E0 - 4 * A * B;
+
+  let r1 = (E0 + sqrt(D)) / (2 * A);
+  let r2 = (E0 - sqrt(D)) / (2 * A);
+
+  if (d > rEq) {
+    rMaxVal = d;
+    rMin = min(r1, r2);
+  } else {
+    rMin = d;
+    rMaxVal = max(r1, r2);
+  }
+
+  let Ueq = m * g * rEq + k * Q * q / rEq;
+  vMaxTheory = sqrt((2 / m) * (E0 - Ueq));
 }
