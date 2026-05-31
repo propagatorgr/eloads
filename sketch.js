@@ -44,6 +44,13 @@ function setup() {
 
 // ===== SLIDERS =====
 function updateLabels() {
+
+  // ✅ ενημέρωση μεταβλητών (ΤΟ ΚΛΕΙΔΙ)
+  Q = document.getElementById("Qslider").value * 1e-6;
+  q = document.getElementById("qslider").value * 1e-6;
+  m = parseFloat(document.getElementById("mslider").value);
+
+  // ✅ labels
   document.getElementById("Qval").innerText =
     document.getElementById("Qslider").value;
 
